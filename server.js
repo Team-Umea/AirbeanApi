@@ -6,15 +6,23 @@ import helmet from "helmet";
 import cors from "cors";
 import { errorHandler, notFoundHandler } from "./middlewares/errorMiddleware.js";
 import "./config/postgres.js";
+import morgan from 'morgan';
+import logger from './logger.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const stream = {
+    write: (message) => logger.info(message.trim()),
+};
+
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
+app.use(morgan('combined', { stream }));
+app.use(express.json());
 
 app.use("/auth", AuthRouter);
 app.use("/api", ApiRouter);
