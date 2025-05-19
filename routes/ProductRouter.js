@@ -1,10 +1,10 @@
 import expres from "express";
-import { getProducts } from "../controllers/ProductController.js";
+import { getProductById, getProducts } from "../controllers/ProductController.js";
 
 const router = expres.Router();
 
 //get product by id
-// router.get("/:productId");
+router.get("/:productId", getProductById);
 
 //get all products, optionally include query params like sort, order, searchquery and limit
 router.get("/", getProducts);
