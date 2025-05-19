@@ -4,6 +4,7 @@ import {
   getProductById,
   getProducts,
   updateProduct,
+  updateProductStockQuantity,
 } from "../controllers/ProductController.js";
 
 const router = expres.Router();
@@ -21,7 +22,7 @@ router.post("/", addProduct);
 router.put("/:productId", updateProduct);
 
 //refill product quantity in stock
-//router.patch("/:productId")
+router.patch("/:productId", updateProductStockQuantity);
 
 //delete a product
 // router.delete("/:productId");
