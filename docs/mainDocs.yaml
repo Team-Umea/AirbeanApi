@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 tags:
-  - name: <EXAMPLE>
-    description: Endpoints for managing <EXAMPLE>
+  - name: Orders
+    description: Endpoints for managing orders
 
 paths: {}

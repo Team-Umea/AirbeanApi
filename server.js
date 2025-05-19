@@ -10,7 +10,7 @@ import {
 } from "./middlewares/errorMiddleware.js";
 import "./config/postgres.js";
 import morgan from "morgan";
-import logger from "./logger.js";
+import logger from "./utils/logger.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./config/swagger.js";
 

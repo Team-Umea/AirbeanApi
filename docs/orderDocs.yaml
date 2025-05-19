@@ -1,0 +1,279 @@
+paths:
+  /orders:
+    post:
+      tags:
+        - Orders
+      summary: Create a new order
+      description: Creates a new order and associated order items.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile_id:
+                  type: integer
+                total_amount:
+                  type: number
+                  format: float
+                order_status:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      quantity:
+                        type: integer
+                      unit_price:
+                        type: number
+                        format: float
+      responses:
+        201:
+          description: Order successfully created
+        400:
+          description: Invalid input
+        500:
+          description: Internal server error
+
+  /orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get a single order
+      description: Retrieves a single order by its ID (without order items).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        404:
+          description: Order not found
+        500:
+          description: Internal server error
+
+    patch:
+      tags:
+        - Orders
+      summary: Update the status of an order
+      description: Updates the status of an order by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order_status:
+                  type: string
+      responses:
+        200:
+          description: Order status updated
+        400:
+          description: Invalid input
+        404:
+          description: Order not found
+        500:
+          description: Internal server error
+
+    delete:
+      tags:
+        - Orders
+      summary: Delete an order
+      description: Deletes a single order and all associated order items.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Order deleted successfully
+        404:
+          description: Order not found
+        500:
+          description: Internal server error
+
+  /orders/{orderId}/full:
+    get:
+      tags:
+        - Orders
+      summary: Get a single order with its items
+      description: Retrieves a specific order along with all associated order items.
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Order with items retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderWithItems"
+        404:
+          description: Order not found
+        500:
+          description: Internal server error
+
+  /orders/profile/{profileId}:
+    get:
+      tags:
+        - Orders
+      summary: Get all orders for a user
+      description: Returns a list of all orders for the specified user (without item details).
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+        500:
+          description: Internal server error
+
+  /orders/history/{profileId}:
+    get:
+      tags:
+        - Orders
+      summary: Get full order history for a user
+      description: Returns all orders and their items for a given user.
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: List of orders with items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrderWithItems"
+        500:
+          description: Internal server error
+
+  /orders/product/{productId}:
+    get:
+      tags:
+        - Orders
+      summary: Get order items for a product within a date range
+      description: Returns all order_item rows for a given product within a specified date range.
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date (YYYY-MM-DD)
+        - name: end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date (YYYY-MM-DD)
+      responses:
+        200:
+          description: List of order items for the product
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrderItemWithDate"
+        400:
+          description: Missing or invalid date range
+        500:
+          description: Internal server error
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        profile_id:
+          type: integer
+        order_date:
+          type: string
+          format: date-time
+        total_amount:
+          type: number
+          format: float
+        order_status:
+          type: string
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_id:
+          type: integer
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        unit_price:
+          type: number
+          format: float
+
+    OrderWithItems:
+      allOf:
+        - $ref: "#/components/schemas/Order"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrderItem"
+
+    OrderItemWithDate:
+      allOf:
+        - $ref: "#/components/schemas/OrderItem"
+        - type: object
+          properties:
+            order_date:
+              type: string
+              format: date-time
+            profile_id:
+              type: integer
