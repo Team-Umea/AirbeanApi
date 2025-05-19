@@ -1,5 +1,5 @@
 paths:
-  /api/orders/:
+  /orders:
     post:
       tags:
         - Orders
@@ -12,45 +12,98 @@ paths:
               $ref: "#/components/schemas/NewOrder"
       responses:
         "201":
-          description: Order created successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Order"
+          description: Order created
         "400":
-          description: Invalid order data
-        "500":
-          description: Server error
+          description: Invalid input
 
-  /api/orders/{id}:
+  /orders/{id}:
     get:
       tags:
         - Orders
-      summary: Get order by ID
+      summary: Get a specific order by ID
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
-          description: ID of the order to retrieve
       responses:
         "200":
           description: Order found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Order"
         "404":
           description: Order not found
 
+    delete:
+      tags:
+        - Orders
+      summary: Delete an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order deleted
+        "404":
+          description: Order not found
+
+  /orders/{orderId}/full:
+    get:
+      tags:
+        - Orders
+      summary: Get full order details with items
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Full order data
+        "404":
+          description: Order not found
+
+  /orders/profile/{profileId}:
+    get:
+      tags:
+        - Orders
+      summary: Get all orders by profile ID
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of orders
+
+  /orders/history/{profileId}:
+    get:
+      tags:
+        - Orders
+      summary: Get detailed order history by profile ID
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order history with item details
+
+  /orders/{id}/status:
     patch:
       tags:
         - Orders
       summary: Update order status
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
@@ -61,270 +114,93 @@ paths:
             schema:
               type: object
               properties:
-                order_status:
+                newStatus:
                   type: string
-                  example: confirmed
+              required:
+                - newStatus
       responses:
         "200":
-          description: Order status updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Order"
+          description: Status updated
         "404":
           description: Order not found
 
-    delete:
-      tags:
-        - Orders
-      summary: Delete an order
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Order deleted
-        "404":
-          description: Order not found
-
-  /api/orders/{id}/full:
-    get:
-      tags:
-        - Orders
-      summary: Get order with its items by order ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID of the order
-      responses:
-        "200":
-          description: Order with items
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrderWithItems"
-        "404":
-          description: Order not found
-
-  /api/orders/profile/{profileId}:
-    get:
-      tags:
-        - Orders
-      summary: Get all orders by profile ID
-      parameters:
-        - in: path
-          name: profileId
-          required: true
-          schema:
-            type: integer
-          description: Profile ID
-      responses:
-        "200":
-          description: List of orders
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Order"
-        "404":
-          description: No orders found for profile
-
-  /api/orders/history/{profileId}:
-    get:
-      tags:
-        - Orders
-      summary: Get full order history with items for profile
-      parameters:
-        - in: path
-          name: profileId
-          required: true
-          schema:
-            type: integer
-          description: Profile ID
-      responses:
-        "200":
-          description: Full order history
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/OrderItemHistory"
-        "404":
-          description: No order history found for profile
-
-  /api/orders/product/{productId}:
-    get:
-      tags:
-        - Orders
-      summary: Get order items for a product in date range
-      parameters:
-        - in: path
-          name: productId
-          required: true
-          schema:
-            type: integer
-          description: Product ID
-        - in: query
-          name: start
-          schema:
-            type: string
-            format: date
-          description: Start date (YYYY-MM-DD)
-        - in: query
-          name: end
-          schema:
-            type: string
-            format: date
-          description: End date (YYYY-MM-DD)
-      responses:
-        "200":
-          description: List of order items for product in date range
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/OrderItem"
-        "404":
-          description: No order items found for product in date range
-
-  /api/orders/{id}/confirm:
+  /orders/{id}/confirm:
     patch:
       tags:
         - Orders
-      summary: Confirm an order and update stock quantities
+      summary: Confirm an order and update product stock
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
-          description: Order ID
       responses:
         "200":
           description: Order confirmed and stock updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Order confirmed and stock updated
         "400":
-          description: Invalid order status or insufficient stock
+          description: Invalid order state or insufficient stock
         "404":
           description: Order not found
 
+  /orders/product/{productId}:
+    get:
+      tags:
+        - Orders
+      summary: Get order items by product and optional date range
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Order items for given product and date range
+
 components:
   schemas:
+    OrderItem:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        unit_price:
+          type: number
+      required:
+        - product_id
+        - quantity
+        - unit_price
+
     NewOrder:
       type: object
+      properties:
+        profile_id:
+          type: integer
+        total_amount:
+          type: number
+        order_status:
+          type: string
+        order_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
       required:
         - profile_id
         - total_amount
         - order_status
         - order_items
-      properties:
-        profile_id:
-          type: integer
-        total_amount:
-          type: number
-          format: float
-        order_status:
-          type: string
-          example: pending
-        order_items:
-          type: array
-          items:
-            $ref: "#/components/schemas/NewOrderItem"
-
-    NewOrderItem:
-      type: object
-      required:
-        - product_id
-        - quantity
-        - unit_price
-      properties:
-        product_id:
-          type: integer
-        quantity:
-          type: integer
-          minimum: 1
-        unit_price:
-          type: number
-          format: float
-
-    Order:
-      type: object
-      properties:
-        id:
-          type: integer
-        profile_id:
-          type: integer
-        order_date:
-          type: string
-          format: date-time
-        total_amount:
-          type: number
-          format: float
-        order_status:
-          type: string
-
-    OrderWithItems:
-      allOf:
-        - $ref: "#/components/schemas/Order"
-        - type: object
-          properties:
-            items:
-              type: array
-              items:
-                $ref: "#/components/schemas/OrderItem"
-
-    OrderItem:
-      type: object
-      properties:
-        id:
-          type: integer
-        order_id:
-          type: integer
-        product_id:
-          type: integer
-        quantity:
-          type: integer
-        unit_price:
-          type: number
-          format: float
-
-    OrderItemHistory:
-      type: object
-      properties:
-        id:
-          type: integer
-        profile_id:
-          type: integer
-        order_date:
-          type: string
-          format: date-time
-        total_amount:
-          type: number
-          format: float
-        order_status:
-          type: string
-        item_id:
-          type: integer
-        product_id:
-          type: integer
-        quantity:
-          type: integer
-        unit_price:
-          type: number
-          format: float

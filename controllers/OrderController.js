@@ -1,99 +1,161 @@
 import { OrderService } from "../services/orderService.js";
+import {
+  orderSchema,
+  orderStatusSchema,
+  orderIdParamSchema,
+  profileIdParamSchema,
+  productDateQuerySchema,
+} from "../validators/orderValidator.js";
+import { z } from "zod";
 
 export const OrderController = {
   createOrder: async (req, res) => {
     try {
-      const newOrder = await OrderService.createOrder(req.body);
-      res.status(201).json(newOrder);
+      const parsed = orderSchema.parse(req.body);
+      const order = await OrderService.createOrder(parsed);
+      res.status(201).json(order);
     } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to create order" });
     }
   },
 
   getOrder: async (req, res) => {
     try {
-      const order = await OrderService.getOrderById(req.params.id);
-      res.status(200).json(order);
+      const { id } = orderIdParamSchema.parse(req.params);
+      const order = await OrderService.getOrderById(Number(id));
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      res.json(order);
     } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
-    }
-  },
-
-  getOrdersByProfile: async (req, res) => {
-    try {
-      const orders = await OrderService.getOrdersByProfileId(
-        req.params.profileId
-      );
-      res.status(200).json(orders);
-    } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
-    }
-  },
-
-  updateStatus: async (req, res) => {
-    try {
-      const updatedOrder = await OrderService.updateOrderStatus(
-        req.params.id,
-        req.body.order_status
-      );
-      res.status(200).json(updatedOrder);
-    } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
-    }
-  },
-
-  deleteOrder: async (req, res) => {
-    try {
-      const deletedOrder = await OrderService.deleteOrder(req.params.id);
-      res.status(200).json(deletedOrder);
-    } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to fetch order" });
     }
   },
 
   getOrderWithItemsById: async (req, res) => {
     try {
-      const orderWithItems = await OrderService.getOrderWithItemsById(
-        req.params.orderId
+      const { orderId } = orderIdParamSchema.parse({ id: req.params.orderId });
+      const fullOrder = await OrderService.getOrderWithItemsById(
+        Number(orderId)
       );
-      res.status(200).json(orderWithItems);
+      if (!fullOrder) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      res.json(fullOrder);
     } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to fetch full order" });
+    }
+  },
+
+  getOrdersByProfile: async (req, res) => {
+    try {
+      const { profileId } = profileIdParamSchema.parse(req.params);
+      const orders = await OrderService.getOrdersByProfileId(Number(profileId));
+      res.json(orders);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to fetch orders" });
     }
   },
 
   getFullOrderHistory: async (req, res) => {
     try {
-      const history = await OrderService.getFullOrderHistory(
-        req.params.profileId
-      );
-      res.status(200).json(history);
+      const { profileId } = profileIdParamSchema.parse(req.params);
+      const history = await OrderService.getFullOrderHistory(Number(profileId));
+      res.json(history);
     } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to fetch order history" });
     }
   },
 
-  getOrderItemsByProductAndDateRange: async (req, res) => {
+  updateStatus: async (req, res) => {
     try {
-      const { productId } = req.params;
-      const { start, end } = req.query;
-      const items = await OrderService.getOrderItemsByProductAndDateRange(
-        productId,
-        start,
-        end
+      const parsed = orderStatusSchema.parse({
+        orderId: req.params.id,
+        newStatus: req.body.newStatus,
+      });
+
+      const updated = await OrderService.updateOrderStatus(
+        Number(parsed.orderId),
+        parsed.newStatus
       );
-      res.status(200).json(items);
+
+      if (!updated) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      res.json({ success: true, status: parsed.newStatus });
     } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to update status" });
+    }
+  },
+
+  deleteOrder: async (req, res) => {
+    try {
+      const { id } = orderIdParamSchema.parse(req.params);
+      const result = await OrderService.deleteOrder(Number(id));
+      if (!result) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      res.json({ success: true });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to delete order" });
     }
   },
 
   confirmOrder: async (req, res) => {
     try {
-      const result = await OrderService.confirmOrder(req.params.id);
-      res.status(200).json(result);
+      const orderId = parseInt(req.params.id);
+      const result = await OrderService.confirmOrder(orderId);
+      res.status(200).json({
+        message: "Order confirmed successfully",
+        order: result,
+      });
     } catch (err) {
-      res.status(err.status || 500).json({ error: err.message });
+      res.status(500).json({ error: "Failed to confirm order" });
+    }
+  },
+
+  getOrderItemsByProductAndDateRange: async (req, res) => {
+    try {
+      const parsed = productDateQuerySchema.parse({
+        productId: req.params.productId,
+        start: req.query.start,
+        end: req.query.end,
+      });
+
+      const data = await OrderService.getOrderItemsByProductAndDateRange(
+        Number(parsed.productId),
+        parsed.start,
+        parsed.end
+      );
+
+      res.json(data);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: err.errors });
+      }
+      res.status(500).json({ error: "Failed to fetch order items" });
     }
   },
 };

@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.post("/", OrderController.createOrder);
 
-router.get("/:id", OrderController.getOrder);
-
 router.get("/:orderId/full", OrderController.getOrderWithItemsById);
+
+router.get("/:id", OrderController.getOrder);
 
 router.get("/profile/:profileId", OrderController.getOrdersByProfile);
 
