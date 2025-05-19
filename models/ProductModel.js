@@ -25,12 +25,17 @@ const Product = {
         FROM product
     `;
 
-    query += `
+    if (search) {
+      query += `
         WHERE product_name ILIKE $1
-        ORDER BY ${validSort} ${validOrder} LIMIT $2 OFFSET $3
+      `;
+    }
+
+    query += `
+      ORDER BY ${validSort} ${validOrder} LIMIT $2 OFFSET $3
     `;
 
-    return await executeQuery(query, [`%${search}%`, limit, offset]);
+    return await executeQuery(query, [`%${search.trim()}%`, limit, offset]);
   },
 
   getById: async function (productId) {
