@@ -71,7 +71,7 @@ const Product = {
             stock_quantity,
             created_at;
       `,
-      [data.productName, data.productInfo, data.cost, !!data.inStock, data.userId]
+      [data.productName, data.productInfo, data.cost, data.stockQuantity, data.userId]
     );
 
     return result[0];

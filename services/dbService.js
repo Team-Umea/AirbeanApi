@@ -30,7 +30,7 @@ export const createTables = async () => {
         jwt_version INTEGER DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-  `);
+    `);
 
     await executeQuery(`
       CREATE TABLE IF NOT EXISTS admin (
@@ -39,7 +39,7 @@ export const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
       );
-  `);
+    `);
 
     await executeQuery(`
       CREATE TABLE IF NOT EXISTS product (
@@ -51,7 +51,7 @@ export const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         added_by_user_id INTEGER NOT NULL
       );
-  `);
+    `);
 
     await executeQuery(`
       CREATE TABLE IF NOT EXISTS orders (
@@ -62,7 +62,7 @@ export const createTables = async () => {
         order_status VARCHAR,
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
       );
-  `);
+    `);
 
     await executeQuery(`
       CREATE TABLE IF NOT EXISTS order_item (
@@ -74,7 +74,7 @@ export const createTables = async () => {
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
         FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
       );
-  `);
+    `);
 
     await executeQuery("COMMIT");
   } catch (err) {
