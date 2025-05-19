@@ -7,7 +7,11 @@ import cors from "cors";
 import { errorHandler, notFoundHandler } from "./middlewares/errorMiddleware.js";
 import "./config/postgres.js";
 import morgan from 'morgan';
-import logger from './logger.js';
+import logger from './utils/Logger.js'
+import cookieParser from "cookie-parser";
+import { authenticate } from "./middlewares/verifyJWT.js";
+
+
 
 dotenv.config();
 
@@ -22,10 +26,16 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors());
 app.use(morgan('combined', { stream }));
-app.use(express.json());
+app.use(cookieParser());
 
 app.use("/auth", AuthRouter);
 app.use("/api", ApiRouter);
+
+app.get("/api/protected", authenticate, (req, res) => {
+    res.json({ message: `Hello ${req.user.username}, you're authenticated!` });
+});
+
+
 
 //Handle not found
 app.use(notFoundHandler);
