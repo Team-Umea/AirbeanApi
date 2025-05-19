@@ -9,7 +9,7 @@ const Product = {
   getAll: async function () {
     return await executeQuery(`
         SELECT 
-            product_id,
+            id,
             product_name,
             product_info,
             cost,
@@ -23,14 +23,14 @@ const Product = {
     const result = await executeQuery(
       `
         SELECT
-            product_id,
+            id,
             product_name,
             product_info,
             cost,
             stock_quantity,
             created_at
         FROM product
-        WHERE product_id = $1
+        WHERE id = $1
       `,
       [productId]
     );
@@ -43,14 +43,14 @@ const Product = {
   },
 
   create: async function (data) {
-    return await executeQuery(
+    const result = await executeQuery(
       `
         INSERT INTO product 
         (product_name, product_info, cost, stock_quantity, added_by_user_id)
         VALUES
         ($1, $2, $3, $4, $5)
         RETURNING
-            product_id,
+            id,
             product_name,
             product_info,
             cost,
@@ -59,6 +59,8 @@ const Product = {
       `,
       [data.productName, data.productInfo, data.cost, !!data.inStock, data.userId]
     );
+
+    return result[0];
   },
 
   update: async function (data, productId) {
@@ -87,13 +89,13 @@ const Product = {
 
     const SET_CLAUSE = keys.map((key, idx) => `${key} = $${idx + 1}`).join(", ");
 
-    return await executeQuery(
+    const result = await executeQuery(
       `
         UPDATE product
         SET ${SET_CLAUSE}
-        WHERE product_id = $${keys.length + 1} 
+        WHERE id = $${keys.length + 1} 
         RETURNING
-            product_id,
+            id,
             product_name,
             product_info,
             cost,
@@ -102,8 +104,11 @@ const Product = {
       `,
       values
     );
+
+    return result[0];
   },
   updateStock: async function (stockQuantity, productId) {
+    // Ensure the product exists before updating
     const product = await this.getById(productId);
 
     if (stockQuantity < 0) {
@@ -112,13 +117,13 @@ const Product = {
       );
     }
 
-    return await executeQuery(
+    const result = await executeQuery(
       `
         UPDATE product
         SET stock_quantity = $1
-        WHERE product_id = $2 
+        WHERE id = $2 
         RETURNING
-            product_id,
+            id,
             product_name,
             product_info,
             cost,
@@ -127,6 +132,29 @@ const Product = {
       `,
       [stockQuantity, productId]
     );
+
+    return result[0];
+  },
+  delete: async function (productId) {
+    // Ensure the product exists before updating
+    await this.getById(productId);
+
+    const result = await executeQuery(
+      `
+        DELETE FROM product
+        WHERE id = $1    
+        RETURNING
+            id,
+            product_name,
+            product_info,
+            cost,
+            stock_quantity,
+            created_at;
+    `,
+      [productId]
+    );
+
+    return result[0];
   },
 };
 

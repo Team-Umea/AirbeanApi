@@ -39,7 +39,7 @@ export const createTables = async () => {
       );
 
       CREATE TABLE IF NOT EXISTS product (
-          product_id SERIAL PRIMARY KEY,
+          id SERIAL PRIMARY KEY,
           product_name VARCHAR NOT NULL,
           product_info TEXT,
           cost DECIMAL(10,2) NOT NULL,

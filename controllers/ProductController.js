@@ -33,7 +33,7 @@ export const addProduct = async (req, res, next) => {
 
     res.status(201).json({
       data: newProduct,
-      message: `Product ${newProduct.product_name} created succesfully`,
+      message: `Product '${newProduct.product_name}' created succesfully`,
       success: true,
     });
   } catch (error) {
@@ -49,9 +49,9 @@ export const updateProduct = async (req, res, next) => {
   try {
     const updatedProduct = await Product.update(productData, productId);
 
-    res.status(201).json({
+    res.status(200).json({
       data: updatedProduct,
-      message: `Product ${updateProduct.product_name} updated succesfully`,
+      message: `Product '${updateProduct.product_name}' updated succesfully`,
       success: true,
     });
   } catch (err) {
@@ -61,16 +61,31 @@ export const updateProduct = async (req, res, next) => {
 
 export const updateProductStockQuantity = async (req, res, next) => {
   const { productId } = req.params;
+  //make sure req.body is validated
   const { stockQuantity } = req.body;
 
   try {
-    //make sure req.body is validated
-
     const updatedProduct = await Product.updateStock(stockQuantity, productId);
 
-    res.status(201).json({
+    res.status(200).json({
       data: updatedProduct,
-      message: `Stock quantity of ${updateProduct.product_name} updated succesfully to ${updateProduct.stock_quantity}`,
+      message: `Stock quantity of '${updateProduct.product_name}' updated succesfully to ${updateProduct.stock_quantity}`,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteProduct = async (req, res, next) => {
+  const { productId } = req.params;
+
+  try {
+    const deletedProduct = await Product.delete(productId);
+
+    res.status(200).json({
+      data: deletedProduct,
+      message: `Product '${deletedProduct.product_name}' deleted succesfully`,
       success: true,
     });
   } catch (err) {

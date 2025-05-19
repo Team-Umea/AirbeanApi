@@ -1,6 +1,7 @@
 import expres from "express";
 import {
   addProduct,
+  deleteProduct,
   getProductById,
   getProducts,
   updateProduct,
@@ -24,7 +25,7 @@ router.put("/:productId", updateProduct);
 //refill product quantity in stock
 router.patch("/:productId", updateProductStockQuantity);
 
-//delete a product
-// router.delete("/:productId");
+// delete a product
+router.delete("/:productId", deleteProduct);
 
 export default router;
