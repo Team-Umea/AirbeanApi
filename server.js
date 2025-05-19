@@ -4,12 +4,10 @@ import AuthRouter from "./routes/AuthRouter.js";
 import ApiRouter from "./routes/ApiRouter.js";
 import helmet from "helmet";
 import cors from "cors";
-import {
-  errorHandler,
-  notFoundHandler,
-} from "./middlewares/errorMiddleware.js";
+import { errorHandler, notFoundHandler } from "./middlewares/errorMiddleware.js";
 import "./config/postgres.js";
 import morgan from "morgan";
+import logger from "./utils/logger.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./config/swagger.js";
 
@@ -49,6 +47,4 @@ app.use(notFoundHandler);
 //Handle all errors
 app.use(errorHandler);
 
-app.listen(PORT, () =>
-  console.log(`Server is runnig at http://localhost:${PORT}`)
-);
+app.listen(PORT, () => console.log(`Server is runnig at http://localhost:${PORT}`));
