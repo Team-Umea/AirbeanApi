@@ -64,7 +64,7 @@ export const createTables = async () => {
         unit_price DECIMAL(10,2),
         PRIMARY KEY (order_id, product_id),
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-        FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
+        FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
       );
     `);
 

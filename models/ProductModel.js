@@ -6,8 +6,15 @@ import {
 import { executeQuery } from "../services/dbService.js";
 
 const Product = {
-  getAll: async function () {
-    return await executeQuery(`
+  getAll: async function (requestQuery) {
+    const { search = "", sort, order, page = 1, limit = 10 } = requestQuery;
+    const offset = (page - 1) * limit;
+
+    const allowedSortFields = ["product_name", "cost", "stock_quantity"];
+    const validSort = allowedSortFields.includes(sort) ? sort : "created_at";
+    const validOrder = order === "asc" ? "ASC" : "DESC";
+
+    let query = `
         SELECT 
             id,
             product_name,
@@ -15,8 +22,15 @@ const Product = {
             cost,
             stock_quantity,
             created_at
-        FROM product;
-    `);
+        FROM product
+    `;
+
+    query += `
+        WHERE product_name ILIKE $1
+        ORDER BY ${validSort} ${validOrder} LIMIT $2 OFFSET $3
+    `;
+
+    return await executeQuery(query, [`%${search}%`, limit, offset]);
   },
 
   getById: async function (productId) {
