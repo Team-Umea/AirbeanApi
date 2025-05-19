@@ -4,7 +4,7 @@ export const getProducts = async (req, res, next) => {
   try {
     const products = await Product.getAll();
 
-    res.status(200).json({ products, success: true });
+    res.status(200).json({ data: products, success: true });
   } catch (err) {
     next(err);
   }
@@ -16,8 +16,25 @@ export const getProductById = async (req, res, next) => {
   try {
     const product = await Product.getById(productId);
 
-    res.status(200).json({ product, success: true });
+    res.status(200).json({ data: product, success: true });
   } catch (err) {
+    next(err);
+  }
+};
+
+export const addProduct = async (req, res, next) => {
+  //when auth-middleware is applied get userId from req.user
+  // const {id:userId} = req.user
+  try {
+    //make sure req.body is validated
+    const productData = { ...req.body, userId: 1 };
+
+    const newProduct = await Product.create(productData);
+
+    res
+      .status(201)
+      .json({ data: newProduct, message: "Product created succesfully", success: true });
+  } catch (error) {
     next(err);
   }
 };

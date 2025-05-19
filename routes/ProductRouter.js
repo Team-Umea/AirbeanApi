@@ -1,5 +1,5 @@
 import expres from "express";
-import { getProductById, getProducts } from "../controllers/ProductController.js";
+import { addProduct, getProductById, getProducts } from "../controllers/ProductController.js";
 
 const router = expres.Router();
 
@@ -10,7 +10,7 @@ router.get("/:productId", getProductById);
 router.get("/", getProducts);
 
 //add a new product - needs to be proected so only admins can add a new product
-// router.post("/");
+router.post("/", addProduct);
 
 //update the name, price and more of an existing product
 // router.patch("/:productId");

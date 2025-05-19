@@ -22,49 +22,49 @@ export const createTables = async () => {
 
     await executeQuery(`
       CREATE TABLE IF NOT EXISTS profile (
-        "id" integer PRIMARY KEY,
-        "email" varchar UNIQUE NOT NULL,
-        "username" varchar UNIQUE NOT NULL,
-        "password" varchar NOT NULL,
-        "role" varchar,
-        "jwt_version" integer DEFAULT 1,
-        "created_at" timestamp
+        id SERIAL PRIMARY KEY,
+        email VARCHAR UNIQUE NOT NULL,
+        username VARCHAR UNIQUE NOT NULL,
+        password_hash VARCHAR NOT NULL,
+        role VARCHAR,
+        jwt_version INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
       CREATE TABLE IF NOT EXISTS admin (
-        "id" integer PRIMARY KEY,
-        "profile_id" integer UNIQUE NOT NULL,
-        "created_at" timestamp,
+        id SERIAL PRIMARY KEY,
+        profile_id INTEGER UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS product (
-        "product_id" integer PRIMARY KEY,
-        "product_name" varchar,
-        "product_info" text,
-        "cost" decimal(10,2),
-        "in_stock" boolean DEFAULT true,
-        "created_at" timestamp,
-        "added_by_user_id" integer NOT NULL
+          product_id SERIAL PRIMARY KEY,
+          product_name VARCHAR NOT NULL,
+          product_info TEXT,
+          cost DECIMAL(10,2) NOT NULL,
+          stock_quantity INTEGER DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          added_by_user_id INTEGER NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS orders (
-        "id" integer PRIMARY KEY,
-        "profile_id" integer NOT NULL,
-        "order_date" timestamp,
-        "total_amount" decimal(10,2),
-        "order_status" varchar,
+        id SERIAL PRIMARY KEY,
+        profile_id INTEGER NOT NULL,
+        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        total_amount DECIMAL(10,2),
+        order_status VARCHAR,
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS order_item (
-        "id" integer PRIMARY KEY,
-        "order_id" integer NOT NULL,
-        "product_id" integer NOT NULL,
-        "quantity" integer DEFAULT 1,
-        "unit_price" decimal(10,2),
+        order_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        quantity INTEGER DEFAULT 1,
+        unit_price DECIMAL(10,2),
+        PRIMARY KEY (order_id, product_id),
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-        FOREIGN KEY (product_id) REFERENCES product_table(product_id) ON DELETE CASCADE
+        FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
       );
     `);
 

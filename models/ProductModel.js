@@ -36,6 +36,24 @@ const Product = {
 
     return result[0];
   },
+  create: async (data) => {
+    return await executeQuery(
+      `
+        INSERT INTO product 
+        (product_name, product_info, cost, in_stock, added_by_user_id)
+        VALUES
+        ($1, $2, $3, $4, $5)
+        RETURNING
+            product_id,
+            product_name,
+            product_info,
+            cost,
+            in_stock,
+            created_at
+    `,
+      [data.productName, data.producInfo, data.cost, !!data.inStock, data.userId]
+    );
+  },
 };
 
 export default Product;
