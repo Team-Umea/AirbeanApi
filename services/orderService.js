@@ -14,36 +14,82 @@ export const OrderService = {
     );
   },
 
-  getOrderById: async (id) => {
-    return await OrderModel.getOrderById(id);
-  },
-
-  getOrderWithItemsById: async (orderId) => {
-    return await OrderModel.getOrderWithItemsById(orderId);
+  getOrderById: async (orderId) => {
+    const order = await OrderModel.getOrderById(orderId);
+    if (!order) {
+      const error = new Error(`Order with id ${orderId} not found`);
+      error.status = 404;
+      throw error;
+    }
+    return order;
   },
 
   getOrdersByProfileId: async (profileId) => {
-    return await OrderModel.getOrdersByProfileId(profileId);
-  },
-
-  getFullOrderHistory: async (profileId) => {
-    return await OrderModel.getFullOrderHistory(profileId);
-  },
-
-  getOrderItemsByProductAndDateRange: async (productId, start, end) => {
-    return await OrderModel.getOrderItemsByProductAndDateRange(
-      productId,
-      start,
-      end
-    );
+    const orders = await OrderModel.getOrdersByProfileId(profileId);
+    if (!orders || orders.length === 0) {
+      const error = new Error(`No orders found for profile ${profileId}`);
+      error.status = 404;
+      throw error;
+    }
+    return orders;
   },
 
   updateOrderStatus: async (orderId, newStatus) => {
-    return await OrderModel.updateOrderStatus(orderId, newStatus);
+    const updatedOrder = await OrderModel.updateOrderStatus(orderId, newStatus);
+    if (!updatedOrder) {
+      const error = new Error(`Order with id ${orderId} not found`);
+      error.status = 404;
+      throw error;
+    }
+    return updatedOrder;
   },
 
   deleteOrder: async (orderId) => {
-    return await OrderModel.deleteOrder(orderId);
+    const deletedOrder = await OrderModel.deleteOrder(orderId);
+    if (!deletedOrder) {
+      const error = new Error(`Order with id ${orderId} not found`);
+      error.status = 404;
+      throw error;
+    }
+    return deletedOrder;
+  },
+
+  getOrderWithItemsById: async (orderId) => {
+    const orderWithItems = await OrderModel.getOrderWithItemsById(orderId);
+    if (!orderWithItems) {
+      const error = new Error(`Order with id ${orderId} not found`);
+      error.status = 404;
+      throw error;
+    }
+    return orderWithItems;
+  },
+
+  getFullOrderHistory: async (profileId) => {
+    const history = await OrderModel.getFullOrderHistory(profileId);
+    if (!history || history.length === 0) {
+      const error = new Error(
+        `No order history found for profile ${profileId}`
+      );
+      error.status = 404;
+      throw error;
+    }
+    return history;
+  },
+
+  getOrderItemsByProductAndDateRange: async (productId, startDate, endDate) => {
+    const items = await OrderModel.getOrderItemsByProductAndDateRange(
+      productId,
+      startDate,
+      endDate
+    );
+    if (!items || items.length === 0) {
+      const error = new Error(
+        `No order items found for product ${productId} in given date range`
+      );
+      error.status = 404;
+      throw error;
+    }
+    return items;
   },
 
   confirmOrder: async (orderId) => {

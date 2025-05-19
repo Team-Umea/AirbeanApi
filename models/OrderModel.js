@@ -36,38 +36,25 @@ export const OrderModel = {
   },
 
   getOrderById: async (orderId) => {
-    const order = await executeQuery(`SELECT * FROM orders WHERE id = $1`, [
-      orderId,
-    ]);
-    const items = await executeQuery(
-      `SELECT * FROM order_item WHERE order_id = $1`,
-      [orderId]
-    );
-    return { ...order[0], items };
-  },
-
-  getOrderWithItemsById: async (orderId) => {
-    const [order] = await executeQuery(`SELECT * FROM orders WHERE id = $1`, [
-      orderId,
-    ]);
-
-    if (!order) return null;
-
-    const items = await executeQuery(
-      `SELECT * FROM order_item WHERE order_id = $1`,
-      [orderId]
-    );
-
-    order.items = items;
-
-    return order;
+    const query = `SELECT * FROM orders WHERE id = $1`;
+    const rows = await executeQuery(query, [orderId]);
+    return rows[0] || null;
   },
 
   getOrdersByProfileId: async (profileId) => {
-    return await executeQuery(
-      `SELECT * FROM orders WHERE profile_id = $1 ORDER BY order_date DESC`,
-      [profileId]
-    );
+    const query = `SELECT * FROM orders WHERE profile_id = $1 ORDER BY order_date DESC`;
+    return await executeQuery(query, [profileId]);
+  },
+
+  getOrderWithItemsById: async (orderId) => {
+    const queryOrder = `SELECT * FROM orders WHERE id = $1`;
+    const orders = await executeQuery(queryOrder, [orderId]);
+    if (orders.length === 0) return null;
+
+    const queryItems = `SELECT * FROM order_item WHERE order_id = $1`;
+    const items = await executeQuery(queryItems, [orderId]);
+
+    return { ...orders[0], items };
   },
 
   getOrdersWithItemsByProfileId: async (profileId) => {
@@ -87,33 +74,38 @@ export const OrderModel = {
     return orders;
   },
 
+  getFullOrderHistory: async (profileId) => {
+    const query = `
+      SELECT o.*, oi.id as item_id, oi.product_id, oi.quantity, oi.unit_price
+      FROM orders o
+      LEFT JOIN order_item oi ON o.id = oi.order_id
+      WHERE o.profile_id = $1
+      ORDER BY o.order_date DESC`;
+    const rows = await executeQuery(query, [profileId]);
+    return rows;
+  },
+
   getOrderItemsByProductAndDateRange: async (productId, startDate, endDate) => {
     const query = `
-    SELECT oi.*, o.order_date, o.profile_id
-    FROM order_item oi
-    JOIN orders o ON oi.order_id = o.id
-    WHERE oi.product_id = $1
-      AND o.order_date BETWEEN $2 AND $3
-    ORDER BY o.order_date DESC
-  `;
-
+      SELECT oi.*
+      FROM order_item oi
+      JOIN orders o ON oi.order_id = o.id
+      WHERE oi.product_id = $1
+        AND o.order_date BETWEEN $2 AND $3`;
     return await executeQuery(query, [productId, startDate, endDate]);
   },
 
   updateOrderStatus: async (orderId, newStatus) => {
-    const result = await executeQuery(
-      `UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *`,
-      [newStatus, orderId]
-    );
-    return result[0];
+    const query = `
+      UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *`;
+    const rows = await executeQuery(query, [newStatus, orderId]);
+    return rows[0] || null;
   },
 
   deleteOrder: async (orderId) => {
-    const result = await executeQuery(
-      `DELETE FROM orders WHERE id = $1 RETURNING *`,
-      [orderId]
-    );
-    return result[0];
+    const query = `DELETE FROM orders WHERE id = $1 RETURNING *`;
+    const rows = await executeQuery(query, [orderId]);
+    return rows[0] || null;
   },
 
   confirmOrder: async (orderId) => {
@@ -122,7 +114,6 @@ export const OrderModel = {
     try {
       await client.query("BEGIN");
 
-      // Hämta order och kontrollera status
       const orderRes = await client.query(
         `SELECT order_status FROM orders WHERE id = $1 FOR UPDATE`,
         [orderId]
@@ -139,15 +130,12 @@ export const OrderModel = {
         };
       }
 
-      // Hämta order items
       const itemsRes = await client.query(
         `SELECT product_id, quantity FROM order_item WHERE order_id = $1`,
         [orderId]
       );
-
       const items = itemsRes.rows;
 
-      // Kontrollera lager för varje produkt
       for (const item of items) {
         const stockRes = await client.query(
           `SELECT stock_quantity FROM product_table WHERE product_id = $1 FOR UPDATE`,
@@ -169,7 +157,6 @@ export const OrderModel = {
         }
       }
 
-      // Uppdatera lager
       for (const item of items) {
         await client.query(
           `UPDATE product_table SET stock_quantity = stock_quantity - $1 WHERE product_id = $2`,
@@ -177,7 +164,6 @@ export const OrderModel = {
         );
       }
 
-      // Uppdatera order status
       await client.query(
         `UPDATE orders SET order_status = 'confirmed' WHERE id = $1`,
         [orderId]
