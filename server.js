@@ -6,6 +6,8 @@ import helmet from "helmet";
 import cors from "cors";
 import { errorHandler, notFoundHandler } from "./middlewares/errorMiddleware.js";
 import "./config/postgres.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocs } from "./config/swagger.js";
 
 dotenv.config();
 
@@ -18,6 +20,12 @@ app.use(cors());
 
 app.use("/auth", AuthRouter);
 app.use("/api", ApiRouter);
+
+app.get("/", (_, res) => {
+  res.redirect("/docs");
+});
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //Handle not found
 app.use(notFoundHandler);
