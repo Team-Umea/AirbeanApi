@@ -30,24 +30,30 @@ export const createTables = async () => {
         jwt_version INTEGER DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+  `);
 
+    await executeQuery(`
       CREATE TABLE IF NOT EXISTS admin (
         id SERIAL PRIMARY KEY,
         profile_id INTEGER UNIQUE NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
       );
+  `);
 
+    await executeQuery(`
       CREATE TABLE IF NOT EXISTS product (
-          id SERIAL PRIMARY KEY,
-          product_name VARCHAR NOT NULL,
-          product_info TEXT,
-          cost DECIMAL(10,2) NOT NULL,
-          stock_quantity INTEGER DEFAULT 0,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          added_by_user_id INTEGER NOT NULL
+        id SERIAL PRIMARY KEY,
+        product_name VARCHAR NOT NULL,
+        product_info TEXT,
+        cost DECIMAL(10,2) NOT NULL,
+        stock_quantity INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        added_by_user_id INTEGER NOT NULL
       );
+  `);
 
+    await executeQuery(`
       CREATE TABLE IF NOT EXISTS orders (
         id SERIAL PRIMARY KEY,
         profile_id INTEGER NOT NULL,
@@ -56,7 +62,9 @@ export const createTables = async () => {
         order_status VARCHAR,
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
       );
+  `);
 
+    await executeQuery(`
       CREATE TABLE IF NOT EXISTS order_item (
         order_id INTEGER NOT NULL,
         product_id INTEGER NOT NULL,
@@ -66,7 +74,7 @@ export const createTables = async () => {
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
         FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
       );
-    `);
+  `);
 
     await executeQuery("COMMIT");
   } catch (err) {
