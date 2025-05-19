@@ -1,4 +1,4 @@
-import { ResourceError } from "../errors/resourceErrors.js";
+import { ResourceNotFoundError, ResourceUpdateError } from "../errors/resourceErrors.js";
 import { executeQuery } from "../services/dbService.js";
 
 const Product = {
@@ -31,7 +31,7 @@ const Product = {
     );
 
     if (result.length === 0) {
-      throw new ResourceError(`Product with ID '${productId}' not found`);
+      throw new ResourceNotFoundError(`Product with ID '${productId}' not found`);
     }
 
     return result[0];
@@ -49,9 +49,51 @@ const Product = {
             product_info,
             cost,
             in_stock,
-            created_at
+            created_at;
     `,
       [data.productName, data.producInfo, data.cost, !!data.inStock, data.userId]
+    );
+  },
+  update: async (data, productId) => {
+    // Ensure the product exists before updating
+    await this.getById(productId);
+
+    const { productName, productInfo, cost, stockQuantity } = data;
+
+    const fieldsToUpdate = {
+      ...(productName !== undefined && { product_name: productName }),
+      ...(productInfo !== undefined && { product_info: productInfo }),
+      ...(cost !== undefined && { cost }),
+      ...(stockQuantity !== undefined && { stock_quantity: stockQuantity }),
+    };
+
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      throw new ResourceUpdateError(
+        `Failed to update product with ID '${productId}', due to missing fields to update`
+      );
+    }
+
+    const keys = Object.keys(fieldsToUpdate);
+    const values = Object.values(fieldsToUpdate);
+
+    values.push(parseInt(productId));
+
+    const SET_CLASUE = keys.map((key, idx) => `${key} = $${idx + 1}`).join(", ");
+
+    return await executeQuery(
+      `
+        UPDATE product
+        SET ${SET_CLASUE}
+        WHERE id = $${keys.length + 1}
+        RETURNING
+            product_id,
+            product_name,
+            product_info,
+            cost,
+            in_stock,
+            created_at;
+    `,
+      [values]
     );
   },
 };

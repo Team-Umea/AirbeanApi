@@ -13,7 +13,10 @@ router.get("/", getProducts);
 router.post("/", addProduct);
 
 //update the name, price and more of an existing product
-// router.patch("/:productId");
+// router.put("/:productId");
+
+//refill product quantity in stock
+//router.patch("/:productId")
 
 //delete a product
 // router.delete("/:productId");

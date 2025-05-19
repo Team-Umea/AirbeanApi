@@ -38,3 +38,20 @@ export const addProduct = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateProduct = async (req, res, next) => {
+  const { productId } = req.params;
+
+  try {
+    //make sure req.body is validated
+    const productData = { ...req.body, userId: 1 };
+
+    const updatedProduct = await Product.update(productData, productId);
+
+    res
+      .status(201)
+      .json({ data: updatedProduct, message: "Product updated succesfully", success: true });
+  } catch (err) {
+    next(err);
+  }
+};
