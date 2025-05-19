@@ -2,19 +2,20 @@ import { ResourceNotFoundError, ResourceUpdateError } from "../errors/resourceEr
 import { executeQuery } from "../services/dbService.js";
 
 const Product = {
-  getAll: async () => {
+  getAll: async function () {
     return await executeQuery(`
         SELECT 
             product_id,
             product_name,
             product_info,
             cost,
-            in_stock,
+            stock_quantity,
             created_at
         FROM product;
     `);
   },
-  getById: async (productId) => {
+
+  getById: async function (productId) {
     const result = await executeQuery(
       `
         SELECT
@@ -22,11 +23,11 @@ const Product = {
             product_name,
             product_info,
             cost,
-            in_stock,
+            stock_quantity,
             created_at
         FROM product
         WHERE product_id = $1
-        `,
+      `,
       [productId]
     );
 
@@ -36,11 +37,12 @@ const Product = {
 
     return result[0];
   },
-  create: async (data) => {
+
+  create: async function (data) {
     return await executeQuery(
       `
         INSERT INTO product 
-        (product_name, product_info, cost, in_stock, added_by_user_id)
+        (product_name, product_info, cost, stock_quantity, added_by_user_id)
         VALUES
         ($1, $2, $3, $4, $5)
         RETURNING
@@ -48,13 +50,14 @@ const Product = {
             product_name,
             product_info,
             cost,
-            in_stock,
+            stock_quantity,
             created_at;
-    `,
-      [data.productName, data.producInfo, data.cost, !!data.inStock, data.userId]
+      `,
+      [data.productName, data.productInfo, data.cost, !!data.inStock, data.userId]
     );
   },
-  update: async (data, productId) => {
+
+  update: async function (data, productId) {
     // Ensure the product exists before updating
     await this.getById(productId);
 
@@ -76,24 +79,27 @@ const Product = {
     const keys = Object.keys(fieldsToUpdate);
     const values = Object.values(fieldsToUpdate);
 
+    console.log(keys.join(", "));
+    console.log(values.join(", "));
+
     values.push(parseInt(productId));
 
-    const SET_CLASUE = keys.map((key, idx) => `${key} = $${idx + 1}`).join(", ");
+    const SET_CLAUSE = keys.map((key, idx) => `${key} = $${idx + 1}`).join(", ");
 
     return await executeQuery(
       `
         UPDATE product
-        SET ${SET_CLASUE}
-        WHERE id = $${keys.length + 1}
+        SET ${SET_CLAUSE}
+        WHERE product_id = $${keys.length + 1} 
         RETURNING
             product_id,
             product_name,
             product_info,
             cost,
-            in_stock,
+            stock_quantity,
             created_at;
-    `,
-      [values]
+      `,
+      values
     );
   },
 };

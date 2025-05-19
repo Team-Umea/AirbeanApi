@@ -1,5 +1,10 @@
 import expres from "express";
-import { addProduct, getProductById, getProducts } from "../controllers/ProductController.js";
+import {
+  addProduct,
+  getProductById,
+  getProducts,
+  updateProduct,
+} from "../controllers/ProductController.js";
 
 const router = expres.Router();
 
@@ -13,7 +18,7 @@ router.get("/", getProducts);
 router.post("/", addProduct);
 
 //update the name, price and more of an existing product
-// router.put("/:productId");
+router.put("/:productId", updateProduct);
 
 //refill product quantity in stock
 //router.patch("/:productId")
