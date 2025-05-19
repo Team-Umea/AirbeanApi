@@ -1,5 +1,5 @@
 paths:
-  /:
+  /api/orders/:
     post:
       tags:
         - Orders
@@ -22,7 +22,7 @@ paths:
         "500":
           description: Server error
 
-  /{id}:
+  /api/orders/{id}:
     get:
       tags:
         - Orders
@@ -90,7 +90,7 @@ paths:
         "404":
           description: Order not found
 
-  /{id}/full:
+  /api/orders/{id}/full:
     get:
       tags:
         - Orders
@@ -112,7 +112,7 @@ paths:
         "404":
           description: Order not found
 
-  /profile/{profileId}:
+  /api/orders/profile/{profileId}:
     get:
       tags:
         - Orders
@@ -136,7 +136,7 @@ paths:
         "404":
           description: No orders found for profile
 
-  /history/{profileId}:
+  /api/orders/history/{profileId}:
     get:
       tags:
         - Orders
@@ -160,7 +160,7 @@ paths:
         "404":
           description: No order history found for profile
 
-  /product/{productId}:
+  /api/orders/product/{productId}:
     get:
       tags:
         - Orders
@@ -196,7 +196,7 @@ paths:
         "404":
           description: No order items found for product in date range
 
-  /{id}/confirm:
+  /api/orders/{id}/confirm:
     patch:
       tags:
         - Orders

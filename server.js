@@ -10,7 +10,6 @@ import {
 } from "./middlewares/errorMiddleware.js";
 import "./config/postgres.js";
 import morgan from "morgan";
-import logger from "./utils/logger.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./config/swagger.js";
 
@@ -37,6 +36,12 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/auth", AuthRouter);
 app.use("/api", ApiRouter);
+
+app.get("/", (_, res) => {
+  res.redirect("/docs");
+});
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //Handle not found
 app.use(notFoundHandler);
