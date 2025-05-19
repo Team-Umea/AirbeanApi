@@ -32,3 +32,4 @@
 2025-05-19 14:52:24 [INFO]: ::1 - - [19/May/2025:12:52:24 +0000] "POST /auth/register HTTP/1.1" 500 71 "-" "PostmanRuntime/7.39.1"
 2025-05-19 14:55:54 [INFO]: ::1 - - [19/May/2025:12:55:54 +0000] "POST /auth/register HTTP/1.1" 201 82 "-" "PostmanRuntime/7.39.1"
 2025-05-19 15:04:18 [INFO]: ::1 - - [19/May/2025:13:04:18 +0000] "POST /auth/login HTTP/1.1" 200 51 "-" "PostmanRuntime/7.39.1"
+2025-05-19 15:38:50 [INFO]: ::1 - - [19/May/2025:13:38:50 +0000] "GET / HTTP/1.1" 404 46 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0"
