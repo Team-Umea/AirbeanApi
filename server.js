@@ -5,6 +5,7 @@ import ApiRouter from "./routes/ApiRouter.js";
 import helmet from "helmet";
 import cors from "cors";
 import { errorHandler, notFoundHandler } from "./middlewares/errorMiddleware.js";
+import "./config/postgres.js";
 
 dotenv.config();
 
