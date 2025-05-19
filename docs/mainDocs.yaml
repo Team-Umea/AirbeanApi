@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  title: AirBean RESTful API
+  description: API documentation using Swagger
+  version: 1.0.0
+
+tags:
+  - name: <EXAMPLE>
+    description: Endpoints for managing <EXAMPLE>
+
+paths: {}
