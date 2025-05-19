@@ -1,4 +1,8 @@
-import { ResourceNotFoundError, ResourceUpdateError } from "../errors/resourceErrors.js";
+import {
+  InvalidResourceValue,
+  ResourceNotFoundError,
+  ResourceUpdateError,
+} from "../errors/resourceErrors.js";
 import { executeQuery } from "../services/dbService.js";
 
 const Product = {
@@ -100,8 +104,13 @@ const Product = {
     );
   },
   updateStock: async function (stockQuantity, productId) {
-    // Ensure the product exists before updating
-    await this.getById(productId);
+    const product = await this.getById(productId);
+
+    if (stockQuantity < 0) {
+      throw new InvalidResourceValue(
+        `Stock quantity of ${product.product_name} cannot be less than 0`
+      );
+    }
 
     return await executeQuery(
       `

@@ -11,3 +11,9 @@ export class ResourceUpdateError extends AppError {
     super(message, 400);
   }
 }
+
+export class InvalidResourceValue extends AppError {
+  constructor(message = "Invalid resource value") {
+    super(message, 400);
+  }
+}
