@@ -27,7 +27,7 @@ export const createTables = async () => {
         "username" varchar UNIQUE NOT NULL,
         "password" varchar NOT NULL,
         "role" varchar,
-        "jwt_version" integer,
+        "jwt_version" integer DEFAULT 1,
         "created_at" timestamp
       );
 
@@ -43,7 +43,7 @@ export const createTables = async () => {
         "product_name" varchar,
         "product_info" text,
         "cost" decimal(10,2),
-        "in_stock" boolean,
+        "in_stock" boolean DEFAULT true,
         "created_at" timestamp,
         "added_by_user_id" integer NOT NULL
       );
