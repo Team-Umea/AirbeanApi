@@ -6,6 +6,6 @@ info:
 
 tags:
   - name: Orders
-    description: Endpoints for managing orders
+    description: All endpoints related to customer orders
 
 paths: {}

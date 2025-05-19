@@ -4,6 +4,6 @@ import OrderRouter from "../routes/OrderRouter.js";
 
 const router = express.Router();
 
-router.use("/order", OrderRouter);
+router.use("/orders", OrderRouter);
 
 export default router;

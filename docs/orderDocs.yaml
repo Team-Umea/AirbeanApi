@@ -223,6 +223,54 @@ paths:
           description: Missing or invalid date range
         500:
           description: Internal server error
+  /orders/{id}/confirm:
+    post:
+      tags:
+        - Orders
+      summary: Confirm an order and update product stock
+      description: |
+        Confirms an existing order by setting its status to "confirmed" and updates product stock quantities accordingly.
+        Only orders with status "pending" can be confirmed.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the order to confirm
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order confirmed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Order confirmed and stock updated
+        "400":
+          description: Order cannot be confirmed (e.g. already confirmed or insufficient stock)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Order is already confirmed or stock is insufficient
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Order not found
+        "500":
+          description: Internal server error
 
 components:
   schemas:

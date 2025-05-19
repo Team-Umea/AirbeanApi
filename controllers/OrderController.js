@@ -108,4 +108,12 @@ export const OrderController = {
       res.status(500).json({ error: err.message });
     }
   },
+  confirmOrder: async (req, res) => {
+    try {
+      const result = await OrderService.confirmOrder(req.params.id);
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
 };

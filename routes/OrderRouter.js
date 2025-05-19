@@ -17,6 +17,8 @@ router.patch("/:id/status", OrderController.updateStatus);
 
 router.delete("/:id", OrderController.deleteOrder);
 
+router.post("/:id/confirm", OrderController.confirmOrder);
+
 // GET /orders/product/:productId?start=YYYY-MM-DD&end=YYYY-MM-DD
 router.get(
   "/product/:productId",

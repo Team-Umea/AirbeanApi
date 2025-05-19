@@ -45,4 +45,8 @@ export const OrderService = {
   deleteOrder: async (orderId) => {
     return await OrderModel.deleteOrder(orderId);
   },
+
+  confirmOrder: async (orderId) => {
+    return await OrderModel.confirmOrder(orderId);
+  },
 };

@@ -115,4 +115,87 @@ export const OrderModel = {
     );
     return result[0];
   },
+
+  confirmOrder: async (orderId) => {
+    const client = await pool.connect();
+
+    try {
+      await client.query("BEGIN");
+
+      // Hämta order och kontrollera status
+      const orderRes = await client.query(
+        `SELECT order_status FROM orders WHERE id = $1 FOR UPDATE`,
+        [orderId]
+      );
+
+      if (orderRes.rows.length === 0) {
+        throw { status: 404, message: "Order not found" };
+      }
+
+      if (orderRes.rows[0].order_status !== "pending") {
+        throw {
+          status: 400,
+          message: "Order is not pending and cannot be confirmed",
+        };
+      }
+
+      // Hämta order items
+      const itemsRes = await client.query(
+        `SELECT product_id, quantity FROM order_item WHERE order_id = $1`,
+        [orderId]
+      );
+
+      const items = itemsRes.rows;
+
+      // Kontrollera lager för varje produkt
+      for (const item of items) {
+        const stockRes = await client.query(
+          `SELECT stock_quantity FROM product_table WHERE product_id = $1 FOR UPDATE`,
+          [item.product_id]
+        );
+
+        if (stockRes.rows.length === 0) {
+          throw {
+            status: 400,
+            message: `Product with id ${item.product_id} not found`,
+          };
+        }
+
+        if (stockRes.rows[0].stock_quantity < item.quantity) {
+          throw {
+            status: 400,
+            message: `Insufficient stock for product ${item.product_id}`,
+          };
+        }
+      }
+
+      // Uppdatera lager
+      for (const item of items) {
+        await client.query(
+          `UPDATE product_table SET stock_quantity = stock_quantity - $1 WHERE product_id = $2`,
+          [item.quantity, item.product_id]
+        );
+      }
+
+      // Uppdatera order status
+      await client.query(
+        `UPDATE orders SET order_status = 'confirmed' WHERE id = $1`,
+        [orderId]
+      );
+
+      await client.query("COMMIT");
+
+      return { message: "Order confirmed and stock updated" };
+    } catch (error) {
+      await client.query("ROLLBACK");
+      if (error.status && error.message) {
+        const err = new Error(error.message);
+        err.status = error.status;
+        throw err;
+      }
+      throw new Error("Failed to confirm order: " + error.message);
+    } finally {
+      client.release();
+    }
+  },
 };
