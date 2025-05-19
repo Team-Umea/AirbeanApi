@@ -5,8 +5,9 @@ import { NotFoundError } from "../errors/appErrors.js";
 
 export const errorHandler = (err, req, res, next) => {
 
-  console.error("Error caught by errorHandler:", err);
-  
+    console.error('Error caught by errorHandler:', err);
+
+
   if (err instanceof ZodError) {
     return res.status(400).json({
       error: "ValidationError",

@@ -35,6 +35,10 @@ app.get("/api/protected", authenticate, (req, res) => {
     res.json({ message: `Hello ${req.user.username}, you're authenticated!` });
 });
 
+app.get('/api/hello', (req, res) => {
+    res.json('Servern är igång!')
+});
+
 
 
 //Handle not found
