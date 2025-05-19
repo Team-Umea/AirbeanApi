@@ -1,4 +1,5 @@
 import expres from "express";
+import { getProducts } from "../controllers/ProductController.js";
 
 const router = expres.Router();
 
@@ -6,7 +7,7 @@ const router = expres.Router();
 // router.get("/:productId");
 
 //get all products, optionally include query params like sort, order, searchquery and limit
-// router.get("/");
+router.get("/", getProducts);
 
 //add a new product - needs to be proected so only admins can add a new product
 // router.post("/");

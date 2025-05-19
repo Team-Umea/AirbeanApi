@@ -38,7 +38,7 @@ export const createTables = async () => {
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
       );
 
-      CREATE TABLE IF NOT EXISTS product_table (
+      CREATE TABLE IF NOT EXISTS product (
         "product_id" integer PRIMARY KEY,
         "product_name" varchar,
         "product_info" text,
