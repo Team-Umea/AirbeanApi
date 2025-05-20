@@ -24,7 +24,14 @@ const stream = {
 
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: (_, callback) => {
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 app.use(morgan("combined", { stream }));
 app.use(cookieParser());
 
