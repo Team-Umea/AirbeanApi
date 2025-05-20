@@ -1,11 +1,13 @@
 import { verifyToken } from "../utils/jwt.js";
-import { AppError } from "../errors/errors.js";
 import AdminModel from "../models/AdminModel.js";
+import { UnauthenticatedError } from "../errors/authErrors.js";
 
 export const authenticate = (req, res, next) => {
   const token = req.cookies?.token;
 
-  if (!token) return next(new AppError("Not authenticated", 401));
+  if (!token) {
+    return next(new UnauthenticatedError());
+  }
 
   try {
     const payload = verifyToken(token);

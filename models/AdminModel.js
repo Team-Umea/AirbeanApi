@@ -1,5 +1,5 @@
 import { ResourceNotFoundError } from "../errors/resourceErrors.js";
-import { UnauthorizedError } from "../errors/roleErrors.js";
+import { UnauthorizedError } from "../errors/authErrors.js";
 import { executeQuery } from "../services/dbService.js";
 
 const Admin = {

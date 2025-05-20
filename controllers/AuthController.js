@@ -1,32 +1,27 @@
 import { generateToken } from "../utils/jwt.js";
 import bcrypt from "bcrypt";
-import { AppError } from "../errors/errors.js";
-import { registerSchema, loginSchema } from "../validators/authValidator.js";
-import pool from "../config/postgres.js";
+import ProfileModel from "../models/ProfileModel.js";
+import ProfileService from "../services/profileService.js";
+import { ResourceConflictError } from "../errors/resourceErrors.js";
+import { LoginError } from "../errors/authErrors.js";
 
 export const register = async (req, res, next) => {
+  const { username, password, email } = req.body;
+
   try {
-    registerSchema.parse(req.body);
+    const isUnique = await ProfileService.ensureUnique(username, email);
 
-    const { username, password, email } = req.body;
-
-    const exists = await pool.query("SELECT 1 FROM profile WHERE username = $1", [username]);
-
-    if (exists.rows.length > 0) {
-      return next(new AppError("Username already taken", 409));
+    if (!isUnique) {
+      throw new ResourceConflictError("Email or username already exists");
     }
 
-    const saltRounds = 10;
-    const password_hash = await bcrypt.hash(password, saltRounds);
+    const password_hash = await bcrypt.hash(password, 10);
 
-    const result = await pool.query(
-      "INSERT INTO profile (username, password_hash, email) VALUES ($1, $2, $3) RETURNING id, username",
-      [username, password_hash, email]
-    );
+    const user = await ProfileModel.create(username, email, password_hash);
 
-    const user = result.rows[0];
+    const payload = { id: user.id, username: user.username, email: user.email };
 
-    const token = generateToken({ id: user.id, username: user.username });
+    const token = generateToken(payload);
 
     res
       .cookie("token", token, {
@@ -39,7 +34,7 @@ export const register = async (req, res, next) => {
       .json({
         success: true,
         message: "User registered",
-        data: { id: user.id, username: user.username },
+        data: payload,
       });
   } catch (error) {
     next(error);
@@ -47,29 +42,18 @@ export const register = async (req, res, next) => {
 };
 
 export const logIn = async (req, res, next) => {
+  const { username, password } = req.body;
+
   try {
-    loginSchema.parse(req.body);
-
-    const { username, password } = req.body;
-
-    const result = await pool.query(
-      "SELECT id, username, password_hash FROM profile WHERE username = $1",
-      [username]
-    );
-
-    const user = result.rows[0];
+    const user = await ProfileService.login(username, password);
 
     if (!user) {
-      return next(new AppError("Invalid credentials", 401));
+      throw new LoginError("Username or password is incorrect");
     }
 
-    const isMatch = await bcrypt.compare(password, user.password_hash);
+    const payload = { id: user.id, username: user.username, email: user.email };
 
-    if (!isMatch) {
-      return next(new AppError("Invalid credentials", 401));
-    }
-
-    const token = generateToken({ id: user.id, username: user.username });
+    const token = generateToken(payload);
 
     res
       .cookie("token", token, {
@@ -82,7 +66,7 @@ export const logIn = async (req, res, next) => {
       .json({
         success: true,
         message: "Logged in successfully",
-        data: { id: user.id, username: user.username },
+        data: payload,
       });
   } catch (error) {
     next(error);

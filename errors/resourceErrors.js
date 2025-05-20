@@ -17,3 +17,9 @@ export class InvalidResourceValue extends AppError {
     super(message, 400);
   }
 }
+
+export class ResourceConflictError extends AppError {
+  constructor(message = "Conflict occured") {
+    super(message, 409);
+  }
+}
