@@ -13,6 +13,7 @@ import {
   validateProductIdReqParam,
   validateProductStockQuantityReqBody,
 } from "../validators/productValidator.js";
+import { authorizeAdmin } from "../middlewares/authMiddleware.js";
 
 const router = expres.Router();
 
@@ -21,6 +22,9 @@ router.get("/:productId", validateProductIdReqParam, getProductById);
 
 //get all products, optionally include query params like sort, order, searchquery and limit
 router.get("/", getProducts);
+
+//authorize admin to modify products
+router.use(authorizeAdmin);
 
 //add a new product - needs to be proected so only admins can add a new product
 router.post("/", validateNewProductReqBody, addProduct);
