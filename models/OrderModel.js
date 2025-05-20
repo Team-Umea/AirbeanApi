@@ -19,7 +19,7 @@ export const OrderModel = {
       for (const item of orderItems) {
         await client.query(
           `INSERT INTO order_item (order_id, product_id, quantity, unit_price)
-           VALUES ($1, $2, $3, $4)`,
+          VALUES ($1, $2, $3, $4)`,
           [orderId, item.product_id, item.quantity, item.unit_price]
         );
       }
@@ -58,20 +58,44 @@ export const OrderModel = {
   },
 
   getOrdersWithItemsByProfileId: async (profileId) => {
-    const orders = await executeQuery(
-      `SELECT * FROM orders WHERE profile_id = $1 ORDER BY order_date DESC`,
-      [profileId]
-    );
+    const query = `
+    SELECT 
+      o.id as order_id, o.profile_id, o.order_date, o.total_amount, o.order_status,
+      oi.id as item_id, oi.product_id, oi.quantity, oi.unit_price
+    FROM orders o
+    LEFT JOIN order_item oi ON o.id = oi.order_id
+    WHERE o.profile_id = $1
+    ORDER BY o.order_date DESC, o.id, oi.id
+  `;
 
-    for (const order of orders) {
-      const items = await executeQuery(
-        `SELECT * FROM order_item WHERE order_id = $1`,
-        [order.id]
-      );
-      order.items = items;
+    const rows = await executeQuery(query, [profileId]);
+
+    const ordersMap = new Map();
+
+    for (const row of rows) {
+      const orderId = row.order_id;
+      if (!ordersMap.has(orderId)) {
+        ordersMap.set(orderId, {
+          id: orderId,
+          profile_id: row.profile_id,
+          order_date: row.order_date,
+          total_amount: row.total_amount,
+          order_status: row.order_status,
+          items: [],
+        });
+      }
+
+      if (row.item_id) {
+        ordersMap.get(orderId).items.push({
+          id: row.item_id,
+          product_id: row.product_id,
+          quantity: row.quantity,
+          unit_price: row.unit_price,
+        });
+      }
     }
 
-    return orders;
+    return Array.from(ordersMap.values());
   },
 
   getFullOrderHistory: async (profileId) => {
@@ -165,7 +189,7 @@ export const OrderModel = {
       }
 
       await client.query(
-        `UPDATE orders SET order_status = 'confirmed' WHERE id = $1`,
+        `UPDATE orders SET order_status = 'confirmed' WHERE id = $1 RETURNING *`,
         [orderId]
       );
 

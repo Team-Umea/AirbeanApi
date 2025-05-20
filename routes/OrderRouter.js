@@ -1,27 +1,67 @@
 import express from "express";
 import { OrderController } from "../controllers/OrderController.js";
+import {
+  validateNewOrderBody,
+  validateIdParam,
+  validateProfileIdParam,
+  validateOrderStatusBody,
+  validateProductDateQuery,
+} from "../validators/orderValidator.js";
 
 const router = express.Router();
 
-router.post("/", OrderController.createOrder);
+// Skapa order
+router.post("/", validateNewOrderBody, OrderController.createOrder);
 
-router.get("/:orderId/full", OrderController.getOrderWithItemsById);
+// Hämta full order med items
+router.get(
+  "/:orderId/full",
+  validateIdParam,
+  OrderController.getOrderWithItemsById
+);
 
-router.get("/:id", OrderController.getOrder);
+// Hämta order via ID
+router.get("/:id", validateIdParam, OrderController.getOrder);
 
-router.get("/profile/:profileId", OrderController.getOrdersByProfile);
+// Hämta orders för en profil (basic)
+router.get(
+  "/profile/:profileId",
+  validateProfileIdParam,
+  OrderController.getOrdersByProfile
+);
 
-router.get("/history/:profileId", OrderController.getFullOrderHistory);
+// Hämta orders med items för en profil
+router.get(
+  "/with-items/profile/:profileId",
+  validateProfileIdParam,
+  OrderController.getOrdersWithItemsByProfile
+);
 
-router.patch("/:id/status", OrderController.updateStatus);
+// Hämta full orderhistorik för en profil
+router.get(
+  "/history/:profileId",
+  validateProfileIdParam,
+  OrderController.getFullOrderHistory
+);
 
-router.delete("/:id", OrderController.deleteOrder);
+// Uppdatera orderstatus
+router.patch(
+  "/:id/status",
+  validateIdParam,
+  validateOrderStatusBody,
+  OrderController.updateStatus
+);
 
-router.patch("/:id/confirm", OrderController.confirmOrder);
+// Ta bort order
+router.delete("/:id", validateIdParam, OrderController.deleteOrder);
 
-// GET /orders/product/:productId?start=YYYY-MM-DD&end=YYYY-MM-DD
+// Bekräfta order och uppdatera lagersaldo
+router.patch("/:id/confirm", validateIdParam, OrderController.confirmOrder);
+
+// Hämta orderitems för produkt och datumintervall
 router.get(
   "/product/:productId",
+  validateProductDateQuery,
   OrderController.getOrderItemsByProductAndDateRange
 );
 
