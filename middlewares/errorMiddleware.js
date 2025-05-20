@@ -33,6 +33,9 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
+  //log the error to the console
+  console.error(err);
+
   res.status(500).json({
     error: "Internal server error",
     message: "An unknown error occurred",

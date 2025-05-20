@@ -10,8 +10,8 @@ import morgan from 'morgan';
 import logger from './utils/Logger.js'
 import cookieParser from "cookie-parser";
 import { authenticate } from "./middlewares/verifyJWT.js";
-
-
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocs } from "./config/swagger.js";
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const stream = {
-    write: (message) => logger.info(message.trim()),
+  write: (message) => logger.info(message.trim()),
 };
 
 app.use(express.json());
@@ -27,6 +27,12 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan('combined', { stream }));
 app.use(cookieParser());
+
+app.get("/", (_, res) => {
+  res.redirect("/docs");
+});
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/auth", AuthRouter);
 app.use("/api", ApiRouter);
@@ -39,7 +45,11 @@ app.get('/api/hello', (req, res) => {
     res.json('Servern är igång!')
 });
 
+app.get("/", (_, res) => {
+  res.redirect("/docs");
+});
 
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //Handle not found
 app.use(notFoundHandler);
