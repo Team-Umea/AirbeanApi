@@ -4,9 +4,7 @@ import { AppError } from "../errors/errors.js";
 import { NotFoundError } from "../errors/appErrors.js";
 
 export const errorHandler = (err, req, res, next) => {
-
-    console.error('Error caught by errorHandler:', err);
-
+  console.error("Error caught by errorHandler:", err);
 
   if (err instanceof ZodError) {
     return res.status(400).json({
@@ -32,9 +30,6 @@ export const errorHandler = (err, req, res, next) => {
       success: false,
     });
   }
-
-  //log the error to the console
-  console.error(err);
 
   res.status(500).json({
     error: "Internal server error",
