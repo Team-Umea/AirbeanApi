@@ -1,7 +1,7 @@
 import express from "express";
 import ProductRouter from "./ProductRouter.js";
 import OrderRouter from "../routes/OrderRouter.js";
-import { authenticate } from "../middlewares/verifyJWT.js";
+import { authenticate } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

@@ -1,79 +1,78 @@
 import { generateToken } from "../utils/jwt.js";
 import bcrypt from "bcrypt";
-import { AppError } from "../errors/errors.js";
-import { registerSchema, loginSchema } from '../validators/authValidator.js';
-import pool from '../config/postgres.js';
-
+import ProfileModel from "../models/ProfileModel.js";
+import ProfileService from "../services/profileService.js";
+import { ResourceConflictError } from "../errors/resourceErrors.js";
+import { LoginError } from "../errors/authErrors.js";
 
 export const register = async (req, res, next) => {
-    try {
-        registerSchema.parse(req.body);
+  const { username, password, email } = req.body;
 
-        const { username, password, email} = req.body;
+  try {
+    const isUnique = await ProfileService.ensureUnique(username, email);
 
-        const exists = await pool.query('SELECT 1 FROM profile WHERE username = $1', [username]);
-
-        if (exists.rows.length > 0 ) {
-            return next(new AppError('username already taken', 409));
-
-        }
-
-
-        const saltRounds = 10;
-        const password_hash = await bcrypt.hash(password, saltRounds);
-    
-        const result = await pool.query(
-        'INSERT INTO profile (username, password_hash, email) VALUES ($1, $2, $3) RETURNING id, username',
-        [username, password_hash, email]
-    );
-
-        const user = result.rows[0];
-        res.status(201).json({ success: true, message: 'User registered', user: { id: user.id, username: user.username } });
-    
-    } catch (error) {
-        next(error)
+    if (!isUnique) {
+      throw new ResourceConflictError("Email or username already exists");
     }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const user = await ProfileModel.create(username, email, password_hash);
+
+    const payload = { id: user.id, username: user.username, email: user.email };
+
+    const token = generateToken(payload);
+
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+      })
+      .status(201)
+      .json({
+        success: true,
+        message: "User registered",
+        data: payload,
+      });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const logIn = async (req, res, next) => {
-    try {
-        loginSchema.parse(req.body);
+  const { username, password } = req.body;
 
-        const { username, password } = req.body;
+  try {
+    const user = await ProfileService.login(username, password);
 
-
-        const result = await pool.query(
-            'SELECT id, username, password_hash FROM profile WHERE username = $1',
-            [username]
-        );
-
-        const user = result.rows[0];
-
-        if (!user) {
-            return next(new AppError("Invalid credentials", 401));
-        }
-
-
-        const isMatch = await bcrypt.compare(password, user.password_hash);
-        if (!isMatch) {
-            return next(new AppError("Invalid credentials", 401));
-        }
-
-        const token = generateToken({ id: user.id, username: user.username });
-
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 1000 * 60 * 60, 
-        }).json({ success: true, message: 'Logged in successfully' });
-
-    } catch (error) {
-        next(error);
+    if (!user) {
+      throw new LoginError("Username or password is incorrect");
     }
+
+    const payload = { id: user.id, username: user.username, email: user.email };
+
+    const token = generateToken(payload);
+
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+      })
+      .status(200)
+      .json({
+        success: true,
+        message: "Logged in successfully",
+        data: payload,
+      });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const logOut = (req, res) => {
-    res.clearCookie('token').json({sucess: true, message: 'logged out'});
+  res.clearCookie("token").status(200).json({ sucess: true, message: "Logged out" });
 };
-

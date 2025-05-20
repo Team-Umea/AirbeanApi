@@ -14,6 +14,7 @@ const Product = {
     const validSort = allowedSortFields.includes(sort) ? sort : "created_at";
     const validOrder = order === "asc" ? "ASC" : "DESC";
 
+    const params = [];
     let query = `
         SELECT 
             id,
@@ -26,16 +27,16 @@ const Product = {
     `;
 
     if (search) {
-      query += `
-        WHERE product_name ILIKE $1
-      `;
+      query += ` WHERE product_name ILIKE $1`;
+      params.push(`%${search.trim()}%`);
+      query += ` ORDER BY ${validSort} ${validOrder} LIMIT $2 OFFSET $3`;
+      params.push(limit, offset);
+    } else {
+      query += ` ORDER BY ${validSort} ${validOrder} LIMIT $1 OFFSET $2`;
+      params.push(limit, offset);
     }
 
-    query += `
-      ORDER BY ${validSort} ${validOrder} LIMIT $2 OFFSET $3
-    `;
-
-    return await executeQuery(query, [`%${search.trim()}%`, limit, offset]);
+    return await executeQuery(query, params);
   },
 
   getById: async function (productId) {
