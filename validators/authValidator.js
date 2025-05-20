@@ -3,7 +3,9 @@ import { z } from "zod";
 export const loginSchema = z
   .object({
     username: z.string().min(1, { message: "Username is required" }),
-    password: z.string().min(6, { message: "Password must be at least 6 character" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 character" }),
   })
   .strict();
 
@@ -25,7 +27,7 @@ export const validateLoginReqBody = (req, res, next) => {
   }
 };
 
-export const validateResigterReqBody = (req, res, next) => {
+export const validateRegisterReqBody = (req, res, next) => {
   try {
     registerSchema.parse(req.body);
 

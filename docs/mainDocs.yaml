@@ -9,4 +9,6 @@ tags:
     description: All endpoints related to customer orders
   - name: Products
     description: All endpoints related to product management.
+  - name: Auth
+    description: All endpoints related to user authentication and management.
 paths: {}
