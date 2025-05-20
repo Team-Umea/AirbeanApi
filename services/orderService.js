@@ -6,6 +6,9 @@ export const OrderService = {
     if (!order_items || order_items.length === 0) {
       throw new Error("Order must include at least one item.");
     }
+    if (!profile_id || total_amount === undefined) {
+      throw new Error("Missing profile_id or total_amount.");
+    }
     return await OrderModel.createOrder(
       profile_id,
       total_amount,
@@ -28,6 +31,18 @@ export const OrderService = {
     const orders = await OrderModel.getOrdersByProfileId(profileId);
     if (!orders || orders.length === 0) {
       const error = new Error(`No orders found for profile ${profileId}`);
+      error.status = 404;
+      throw error;
+    }
+    return orders;
+  },
+
+  getOrdersWithItemsByProfileId: async (profileId) => {
+    const orders = await OrderModel.getOrdersWithItemsByProfileId(profileId);
+    if (!orders || orders.length === 0) {
+      const error = new Error(
+        `No orders with items found for profile ${profileId}`
+      );
       error.status = 404;
       throw error;
     }

@@ -81,6 +81,51 @@ paths:
         "200":
           description: List of orders
 
+  /orders/with-items/profile/{profileId}:
+    get:
+      tags:
+        - Orders
+      summary: Get all orders with items by profile ID
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of orders with their items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrderWithItems"
+              example:
+                - id: 1
+                  profile_id: 10
+                  order_date: "2025-05-20T12:34:56.789Z"
+                  total_amount: 299.99
+                  order_status: "confirmed"
+                  items:
+                    - product_id: 101
+                      quantity: 2
+                      unit_price: 99.99
+                    - product_id: 102
+                      quantity: 1
+                      unit_price: 100.01
+                - id: 2
+                  profile_id: 10
+                  order_date: "2025-04-15T09:12:34.567Z"
+                  total_amount: 149.95
+                  order_status: "pending"
+                  items:
+                    - product_id: 103
+                      quantity: 3
+                      unit_price: 49.98
+        "404":
+          description: No orders with items found
+
   /orders/history/{profileId}:
     get:
       tags:
@@ -204,3 +249,22 @@ components:
         - total_amount
         - order_status
         - order_items
+
+    OrderWithItems:
+      type: object
+      properties:
+        id:
+          type: integer
+        profile_id:
+          type: integer
+        order_date:
+          type: string
+          format: date-time
+        total_amount:
+          type: number
+        order_status:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
