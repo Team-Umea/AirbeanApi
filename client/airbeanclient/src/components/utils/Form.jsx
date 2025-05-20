@@ -7,7 +7,7 @@ const Form = ({ onSubmit, children, className }) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn("p-12! flex flex-col items-center gap-y-20 w-full rounded-md", className)}>
+      className={cn("p-12! flex flex-col items-center w-full rounded-md", className)}>
       {children}
     </form>
   );

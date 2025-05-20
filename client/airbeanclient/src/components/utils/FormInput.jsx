@@ -6,6 +6,7 @@ const FormInput = ({
   label,
   type = "text",
   placeholder = "",
+  className,
   classNameLabel,
   classNameInput,
 }) => {
@@ -17,7 +18,7 @@ const FormInput = ({
   const error = errors[name]?.message;
 
   return (
-    <div className="flex flex-col gap-y-2 w-full">
+    <div className={cn("flex flex-col gap-y-2 w-full", className)}>
       {label && (
         <label htmlFor={name} className={cn("font-medium text-lg", classNameLabel)}>
           {label}

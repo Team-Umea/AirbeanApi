@@ -8,8 +8,10 @@ import PrimaryButton from "../components/btn/PrimaryButton";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../api/api";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import SecondaryButton from "../components/btn/SecondaryButton";
+import { getQueryParams } from "../lib/utitls";
 
 const loginSchema = z.object({
   username: z.string().nonempty("Användarnamn får inte vara tomt"),
@@ -17,6 +19,7 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const formMehtods = useForm({ resolver: zodResolver(loginSchema) });
   const loginMutation = useMutation({
@@ -38,21 +41,49 @@ const Login = () => {
     },
   });
 
+  const role = getQueryParams(location).get("as");
+
   const { isPending } = loginMutation;
 
-  const onSubmit = (data) => loginMutation.mutate(data);
+  const onSubmit = (data) => loginMutation.mutate(data, role);
 
   return (
     <MaxWidthWrapper>
-      <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="mt-20! flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-medium">
+          Logga in med ditt{" "}
+          <span className="text-orange-600 font-bold">{role === "admin" ? "admin" : "kund"}</span>{" "}
+          konto.
+        </h1>
+        <Link
+          to="/register"
+          className="mt-4! font-semibold border-b border-transparent transition-all duration-200 ease hover:border-amber-700 focus:border-amber-700 outline-none">
+          <span className="text-amber-700 flex items-center gap-x-1">
+            Har du inget konto? <ArrowRight className="h-4 w-4" />
+          </span>
+        </Link>
         <FormProvider {...formMehtods}>
           <Form onSubmit={onSubmit} className="max-w-xl">
-            <FormInput name="username" label="Användarnamn" />
-            <FormInput name="password" label="Lösenord" />
-            <PrimaryButton>
+            <FormInput name="username" label="Användarnamn" className="mt-2!" />
+            <FormInput name="password" type="password" label="Lösenord" className="mt-8!" />
+            <PrimaryButton type="submit" className="mt-12!" disabled={isPending}>
               Logga in
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             </PrimaryButton>
+            <div className="relative w-full mt-14!">
+              <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 relative z-10">eller</span>
+              </div>
+            </div>
+            <SecondaryButton
+              onClick={() => navigate(role === "admin" ? "/login" : "/login?as=admin")}
+              className="mt-12!"
+              disabled={isPending}>
+              {role === "admin" ? "Fortsätt som kund" : "Fortsätt som admin"}
+            </SecondaryButton>
           </Form>
         </FormProvider>
       </div>
