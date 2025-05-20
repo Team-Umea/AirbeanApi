@@ -1,9 +1,5 @@
-import React from 'react'
-
 const Menu = () => {
-  return (
-    <div>Menu</div>
-  )
-}
+  return <div className="text-red-900">Menu</div>;
+};
 
-export default Menu
+export default Menu;
