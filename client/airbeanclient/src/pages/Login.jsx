@@ -26,7 +26,7 @@ const Login = () => {
     mutationFn: login,
     onSuccess: (data) => {
       //store user data in redux
-      toast.success("Logged in successfully");
+      toast.success("Inloggningen lyckades");
       navigate("/");
     },
     onError: (err) => {
