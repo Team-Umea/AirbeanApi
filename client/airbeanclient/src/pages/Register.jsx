@@ -59,7 +59,7 @@ const Register = () => {
         <FormProvider {...formMehtods}>
           <Form onSubmit={onSubmit} className="max-w-xl">
             <FormInput name="username" label="Användarnamn" className="mt-2!" />
-            <FormInput name="email" label="E-postadress" className="mt-2!" />
+            <FormInput name="email" label="E-postadress" className="mt-8!" />
             <FormInput name="password" type="password" label="Lösenord" className="mt-8!" />
             <PrimaryButton type="submit" className="mt-12!" disabled={isPending}>
               Skapa konto
