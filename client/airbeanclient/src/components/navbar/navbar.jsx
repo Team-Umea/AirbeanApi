@@ -4,9 +4,12 @@ import { FaShoppingCart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 export default function Navbar() {
-  const cartItemCount = 2;
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  const cartItemCount = useSelector((state) => 
+    state.cart.items.reduce((total, item) => total + item.quantity, 0)
+  );
 
   return (
     <nav className="navbar">
