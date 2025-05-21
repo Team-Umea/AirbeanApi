@@ -8,8 +8,19 @@ const Footer = () => (
   >
     <div className="container mx-auto px-4 flex flex-col items-center gap-6 lg:grid lg:grid-cols-3 lg:items-center">
       <div className="flex items-center justify-center lg:justify-start">
-        <img src={drone} alt="AirBean Drone Logo" className="w-10 h-10 mr-3" />
-        <span className="font-bold text-xl tracking-wide">AirBean Coffee</span>
+        <Link
+          to="/"
+          className="flex items-center hover:opacity-80 transition-opacity"
+        >
+          <img
+            src={drone}
+            alt="AirBean Drone Logo"
+            className="w-10 h-10 mr-3"
+          />
+          <span className="font-bold text-xl tracking-wide">
+            AirBean Coffee
+          </span>
+        </Link>
       </div>
       <div className="flex flex-col items-center">
         <p className="text-sm text-center">
@@ -22,22 +33,34 @@ const Footer = () => (
       <nav className="flex justify-center lg:justify-end">
         <ul className="flex flex-col md:flex-row gap-4 text-sm items-center">
           <li>
-            <Link to="/" className="hover:underline underline-offset-4">
+            <Link
+              to="/"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
               Meny
             </Link>
           </li>
           <li>
-            <Link to="/about" className="hover:underline underline-offset-4">
-              Om oss
+            <Link
+              to="/about"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
+              Vårt kaffe
             </Link>
           </li>
           <li>
-            <Link to="/profil" className="hover:underline underline-offset-4">
+            <Link
+              to="/profil"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
               Profil
             </Link>
           </li>
           <li>
-            <Link to="/cart" className="hover:underline underline-offset-4">
+            <Link
+              to="/cart"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
               Kundvagn
             </Link>
           </li>
