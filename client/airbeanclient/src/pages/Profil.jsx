@@ -14,9 +14,6 @@ const Profil = () => {
     navigate("/")
   };
 
-
-
-
   return (
     <>
     <div className='profil-page'>

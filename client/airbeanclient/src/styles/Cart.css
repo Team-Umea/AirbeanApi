@@ -47,6 +47,7 @@
     margin-top: 2rem;
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     margin-bottom: 10px;
     }
@@ -79,4 +80,50 @@
 
     .clear-cart-btn:hover {
     color: #7f1d1d;
+    }
+
+    .title-coofee {
+    text-align: center;
+    }
+
+        .discount-code-section {
+    margin-top: 1.5rem;
+    }
+
+    .discount-input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    margin-right: 0.5rem;
+    }
+
+    .apply-discount-btn {
+    padding: 0.5rem 1rem;
+    background-color: #5a3e2b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    }
+
+    .apply-discount-btn:hover {
+    background-color: #7b5236;
+
+    }
+
+    .error-message {
+    color: red;
+    margin-top: 0.5rem;
+    }
+
+    .success-message {
+    color: green;
+    margin-top: 0.5rem;
+    }
+
+    .cart-total h3.line-through {
+    margin-bottom: 0.25rem;
+    }
+
+    .cart-total h2 {
+    font-size: 1.25rem;
     }

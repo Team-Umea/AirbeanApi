@@ -5,7 +5,6 @@ import { useState } from "react";
 import drone from "../../assets/drone.svg";
 
 export default function Navbar() {
-  const cartItemCount = 2;
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -97,6 +96,10 @@ export default function Navbar() {
         </span>
       )}
     </Link>
+  );
+
+  const cartItemCount = useSelector((state) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0)
   );
 
   return (

@@ -3,10 +3,12 @@ import authReducer from "./authSlice";
 import productReducer from "./productSlice";
 import authenticateUser from "./middlewares/authMiddleware";
 import getProducts from "./middlewares/productMiddleware";
+import cartReducer from '../store/cartSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   product: productReducer,
+  cart: cartReducer,
 });
 
 const store = configureStore({
