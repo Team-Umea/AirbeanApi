@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "../../components/navbar/navbar.css";
 import { FaShoppingCart } from "react-icons/fa";
-import { FaShoppingCart } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
   const cartItemCount = 2;
