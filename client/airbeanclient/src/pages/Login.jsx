@@ -50,7 +50,6 @@ const Login = () => {
 
       if (role === "admin") {
         navigate("/admin");
-        console.log("Navigate to admin plase");
       } else {
         navigate("/profil");
       }
@@ -61,6 +60,9 @@ const Login = () => {
       switch (err.status) {
         case 400:
           errorMessage = "Fel användarnamn eller lösenord";
+          break;
+        case 401:
+          errorMessage = "Du har inte admin behörighet";
           break;
         case 500:
           errorMessage = "Servern svarade med ett fel, var snäll och försök igen";

@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -16,7 +17,8 @@ export default function Layout() {
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem("pathname", location.pathname);
+    const pathname = location.pathname;
+    navigate(`${pathname}?origin=${pathname}`, { replace: true });
   }, [location.pathname]);
 
   return (

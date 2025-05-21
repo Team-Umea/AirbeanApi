@@ -3,7 +3,6 @@ import PrimaryButton from "../components/btn/PrimaryButton";
 
 const NotFound = () => {
   const navigate = useNavigate();
-  sessionStorage.removeItem("pathname");
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-6">
