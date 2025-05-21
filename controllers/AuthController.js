@@ -53,7 +53,7 @@ export const logIn = async (req, res, next) => {
       throw new LoginError("Username or password is incorrect");
     }
 
-    const payload = { id: user.id, username: user.username, email: role };
+    const payload = { id: user.id, username: user.username, email: user.email, role };
 
     const token = generateToken(payload);
 

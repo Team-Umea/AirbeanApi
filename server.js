@@ -26,9 +26,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(
   cors({
-    origin: (_, callback) => {
-      return callback(null, true);
-    },
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );

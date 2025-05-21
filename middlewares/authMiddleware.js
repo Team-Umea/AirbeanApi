@@ -11,6 +11,7 @@ export const authenticate = (req, res, next) => {
 
   try {
     const payload = verifyToken(token);
+
     req.user = payload;
     next();
   } catch (err) {
