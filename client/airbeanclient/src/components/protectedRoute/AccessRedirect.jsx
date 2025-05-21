@@ -4,6 +4,8 @@ import { Navigate } from "react-router-dom";
 
 const AccessRedirect = ({ children }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
+
   const origin = getQueryParams(location).get("origin");
 
   if (isAuthenticated) {
@@ -11,7 +13,7 @@ const AccessRedirect = ({ children }) => {
       return null;
     }
 
-    return <Navigate to="/profil" />;
+    return isAdmin ? <Navigate to="/admin" /> : <Navigate to="/profil" />;
   }
 
   return children;

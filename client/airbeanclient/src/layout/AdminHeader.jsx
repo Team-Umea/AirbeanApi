@@ -15,7 +15,7 @@ const AdminHeader = () => {
   const isProductsPage = pathname.includes("produkter");
 
   return (
-    <div className="flex flex-col lg:flex-row gap-y-4 p-6 pt-10 lg:p-4!">
+    <div className="flex flex-col lg:flex-row gap-y-4 p-6 pt-10 lg:p-8!">
       <div className="">
         <p className="text-xl font-semibold text-amber-700">Välkommen {username}!</p>
         <p className="text-lg font-semibold text-gray-700">{email}</p>

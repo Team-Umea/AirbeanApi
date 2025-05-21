@@ -45,7 +45,12 @@ const Login = () => {
       }
 
       toast.success("Inloggningen lyckades");
-      navigate("/");
+
+      if (role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     },
     onError: (err) => {
       let errorMessage = "";
@@ -70,7 +75,7 @@ const Login = () => {
 
   const { isPending } = loginMutation;
 
-  const onSubmit = (data) => loginMutation.mutate(data, role);
+  const onSubmit = (data) => loginMutation.mutate({ ...data, role });
 
   const handleRoleToggle = () => {
     const searchParams = getQueryParams(location);

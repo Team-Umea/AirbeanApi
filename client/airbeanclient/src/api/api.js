@@ -2,11 +2,13 @@ import axios from "axios";
 
 export const API_URL = "http://localhost:3000";
 
-export const login = async (data, role) => {
+export const login = async (data) => {
+  const { username, password, role } = data;
+
   try {
     const response = await axios.post(
-      `${API_URL}/auth/login?${role === "admin" ? "as=admin" : ""}`,
-      data,
+      `${API_URL}/auth/login${role === "admin" ? "?as=admin" : ""}`,
+      { username, password },
       { withCredentials: true }
     );
 
