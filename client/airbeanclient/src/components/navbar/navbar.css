@@ -5,6 +5,12 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
+.navbar-links {
+  display: flex;
+  align-items: center; 
+  gap: 1rem; 
+}
+
 .navbar-container {
   display: flex;
   justify-content: space-between;
@@ -27,4 +33,33 @@
 
 .navbar-links a:hover {
   color: #fbbf24;
+}
+
+
+.cart-icon {
+  margin-left: 10px;
+  transition: transform 0.2s;
+}
+
+.cart-icon:hover {
+  transform: scale(1.1);
+}
+
+.cart-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+  line-height: 1;
 }

@@ -3,8 +3,6 @@ import "../../components/navbar/navbar.css";
 import { useSelector } from "react-redux";
 
 export default function Navbar() {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -14,8 +12,8 @@ export default function Navbar() {
           <Link to="/about">Vårt kaffe</Link>
           <Link to="/profil">Min profil</Link>
           <Link to="/orderstatus">Orderstatus</Link>
-          {!isAuthenticated && <Link to="/register">Skapa konto</Link>}
-          {!isAuthenticated && <Link to="/login">Logga in</Link>}
+          <Link to="/register">Skapa konto</Link>
+          <Link to="/login">Logga in</Link>
         </div>
       </div>
     </nav>
