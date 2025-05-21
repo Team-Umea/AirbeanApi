@@ -29,7 +29,7 @@ export default function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="layout-wrapper">
+    <div className="layout-wrapper bg-amber-100">
       <Navbar />
       <main className="main-content min-h-screen">
         <Outlet />
