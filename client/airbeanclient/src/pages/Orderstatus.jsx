@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import drone2 from "../assets/drone2.svg";
 
 // Exempel på order-prop, byt ut mot riktig data i din app!
 const exampleOrder = {
   id: "12345",
-  countdownSeconds: 10, // eller valfritt antal sekunder
+  countdownSeconds: 10,
   order_items: [
     { product_name: "Bryggkaffe", quantity: 2 },
     { product_name: "Latte", quantity: 1 },
@@ -31,12 +32,39 @@ const Orderstatus = ({ order = exampleOrder }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-amber-100">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-amber-100 mt-12">
+      <style>
+        {`
+          @keyframes drone-fly {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-40px); }
+            50% { transform: translateX(0); }
+            75% { transform: translateX(40px); }
+            100% { transform: translateX(0); }
+          }
+          .drone-anim {
+            display: inline-block;
+            animation: drone-fly 2s infinite ease-in-out;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+          }
+        `}
+      </style>
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+        {secondsLeft > 0 && (
+          <div className="flex justify-center">
+            <img
+              src={drone2}
+              alt="drönare"
+              className="drone-anim"
+              style={{ width: "60px", height: "60px" }}
+            />
+          </div>
+        )}
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           {secondsLeft > 0
             ? "Din beställning är på väg!"
-            : "Ordern är levererad!"}
+            : "Ordern är levererad! 🎉"}
         </h1>
         <p className="text-lg text-gray-800 mb-2 text-center">
           Ordernummer: <span className="font-semibold">{order.id}</span>
