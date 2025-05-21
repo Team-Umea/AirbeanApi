@@ -8,6 +8,10 @@ export default function Navbar() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const cartItemCount = useSelector((state) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0)
+  );
+
   const navLinks = (
     <>
       <Link
@@ -96,10 +100,6 @@ export default function Navbar() {
         </span>
       )}
     </Link>
-  );
-
-  const cartItemCount = useSelector((state) =>
-    state.cart.items.reduce((total, item) => total + item.quantity, 0)
   );
 
   return (
