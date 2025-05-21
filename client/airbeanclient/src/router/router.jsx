@@ -67,14 +67,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "orderplaced",
-        element: (
-          <ProtectedRoute>
-            <Orderplaced />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: "*",
         element: <NotFound />,
       },
