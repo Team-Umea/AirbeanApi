@@ -9,7 +9,6 @@ import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import Cart from "../pages/Cart";
-import Orderplaced from "../pages/Orderplaced";
 import AccessRedirect from "../components/protectedRoute/AccessRedirect";
 import ProductPage from "../pages/ProductPage";
 
