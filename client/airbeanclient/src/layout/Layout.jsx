@@ -1,8 +1,16 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/navbar/navbar";
 import { Toaster } from "sonner";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
 
 export default function Layout() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({ type: "AUTHENTICATE" });
+  }, []);
+
   return (
     <div className="layout-wrapper">
       <Navbar />

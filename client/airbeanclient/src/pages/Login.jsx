@@ -12,6 +12,14 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SecondaryButton from "../components/btn/SecondaryButton";
 import { getQueryParams } from "../lib/utitls";
+import { useDispatch } from "react-redux";
+import {
+  setEmail,
+  setIsAdmin,
+  setIsAuthenticated,
+  setUserID,
+  setUsername,
+} from "../store/authSlice";
 
 const loginSchema = z.object({
   username: z.string().nonempty("Användarnamn får inte vara tomt"),
@@ -21,11 +29,20 @@ const loginSchema = z.object({
 const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const formMehtods = useForm({ resolver: zodResolver(loginSchema) });
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      //store user data in redux
+      dispatch(setIsAuthenticated(true));
+      dispatch(setUserID(data.id));
+      dispatch(setUsername(data.username));
+      dispatch(setEmail(data.email));
+
+      if (data.role && data.role === "admin") {
+        dispatch(setIsAdmin(true));
+      }
+
       toast.success("Inloggningen lyckades");
       navigate("/");
     },

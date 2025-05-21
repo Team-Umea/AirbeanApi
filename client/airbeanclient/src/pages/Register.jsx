@@ -10,6 +10,14 @@ import { register } from "../api/api";
 import { toast } from "sonner";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  setEmail,
+  setIsAdmin,
+  setIsAuthenticated,
+  setUserID,
+  setUsername,
+} from "../store/authSlice";
 
 const registerSchema = z.object({
   username: z.string().nonempty("Användarnamn får inte vara tomt"),
@@ -19,11 +27,20 @@ const registerSchema = z.object({
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const formMehtods = useForm({ resolver: zodResolver(registerSchema) });
   const registerMutation = useMutation({
     mutationFn: register,
     onSuccess: (data) => {
-      //store user data in redux
+      dispatch(setIsAuthenticated(true));
+      dispatch(setUserID(data.id));
+      dispatch(setUsername(data.username));
+      dispatch(setEmail(data.email));
+
+      if (data.role && data.role === "admin") {
+        dispatch(setIsAdmin(true));
+      }
+
       toast.success("Gratis! Ditt konto har skapats");
       navigate("/");
     },
