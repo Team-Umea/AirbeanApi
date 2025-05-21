@@ -13,6 +13,41 @@ paths:
       responses:
         "201":
           description: Order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  profile_id:
+                    type: integer
+                  total_amount:
+                    type: number
+                  order_status:
+                    type: string
+                  order_items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OrderItem"
+                  estimatedDeliveryTime:
+                    type: string
+                    format: date-time
+                    description: Estimated delivery time in ISO format
+                  countdownSeconds:
+                    type: integer
+                    description: Seconds remaining until estimated delivery
+              example:
+                id: 123
+                profile_id: 10
+                total_amount: 199.99
+                order_status: "pending"
+                order_items:
+                  - product_id: 101
+                    quantity: 2
+                    unit_price: 99.99
+                estimatedDeliveryTime: "2025-05-21T13:45:00.000Z"
+                countdownSeconds: 900
         "400":
           description: Invalid input
 

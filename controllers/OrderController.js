@@ -19,7 +19,20 @@ export const OrderController = {
         profile_id,
       });
 
-      res.status(201).json(order);
+      // Beräknar uppskattad leveranstid
+      const estimatedDeliveryTime = new Date(Date.now() + 15 * 60 * 1000);
+
+      // Ger beräknad tid kvar i sekunder
+      //Starta en timer med värdet på countdownSeconds och dekrementera den varje sekund
+      const countdownSeconds = Math.floor(
+        (estimatedDeliveryTime - Date.now()) / 1000
+      );
+
+      res.status(201).json({
+        ...order,
+        estimatedDeliveryTime: estimatedDeliveryTime.toISOString(),
+        countdownSeconds,
+      });
     } catch (err) {
       if (err instanceof z.ZodError) {
         return res.status(400).json({ error: err.errors });
