@@ -9,7 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { register } from "../api/api";
 import { toast } from "sonner";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   setEmail,
@@ -22,7 +22,7 @@ import {
 const registerSchema = z.object({
   username: z.string().nonempty("Användarnamn får inte vara tomt"),
   email: z.string().email("Ogiltig e-postadress"),
-  password: z.string().nonempty("Lösenord får inte vara tomt"),
+  password: z.string().min(6, "Ange minst 6 tecken"),
 });
 
 const Register = () => {
@@ -46,12 +46,22 @@ const Register = () => {
       navigate("/");
     },
     onError: (err) => {
-      const errorMessage =
-        err.response?.data?.issues?.[0]?.message ||
-        err.response?.data?.error ||
-        err.response?.data?.message ||
-        err.message ||
-        "An unknown error occurred";
+      let errorMessage = "";
+
+      switch (err.status) {
+        case 400:
+          errorMessage = "Kontrolla så att dina uppgifter har rätt formatering";
+          break;
+        case 409:
+          errorMessage = "Användarnamn eller e-postadress är upptagen";
+          break;
+        case 500:
+          errorMessage = "Servern svarade med ett fel, var snäll och försök igen";
+          break;
+        default:
+          errorMessage = "Ett oväntat fel inträffade, var snäll och försök igen";
+          break;
+      }
 
       toast.error(errorMessage);
     },

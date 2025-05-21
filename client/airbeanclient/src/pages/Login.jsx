@@ -48,12 +48,19 @@ const Login = () => {
       navigate("/");
     },
     onError: (err) => {
-      const errorMessage =
-        err.response?.data?.issues?.[0]?.message ||
-        err.response?.data?.error ||
-        err.response?.data?.message ||
-        err.message ||
-        "An unknown error occurred";
+      let errorMessage = "";
+
+      switch (err.status) {
+        case 400:
+          errorMessage = "Fel användarnamn eller lösenord";
+          break;
+        case 500:
+          errorMessage = "Servern svarade med ett fel, var snäll och försök igen";
+          break;
+        default:
+          errorMessage = "Ett oväntat fel inträffade, var snäll och försök igen";
+          break;
+      }
 
       toast.error(errorMessage);
     },
