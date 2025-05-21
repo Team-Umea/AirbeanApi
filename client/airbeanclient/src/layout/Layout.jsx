@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar/navbar";
+import Footer from "../components/footer/footer";
 import { Toaster } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -44,6 +45,7 @@ export default function Layout() {
         }}
         richColors
       />
+      <Footer />
     </div>
   );
 }
