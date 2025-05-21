@@ -1,6 +1,6 @@
 import { verifyToken } from "../utils/jwt.js";
 import AdminModel from "../models/AdminModel.js";
-import { UnauthenticatedError } from "../errors/authErrors.js";
+import { UnauthenticatedError, UnauthorizedError } from "../errors/authErrors.js";
 
 export const authenticate = (req, res, next) => {
   const token = req.cookies?.token;
@@ -25,7 +25,12 @@ export const authorizeAdmin = async (req, res, next) => {
       return next(err);
     }
 
-    const { id: profileId } = req.user;
+    const { id: profileId, role } = req.user;
+
+    //just a way to avoid checking admin table on every request
+    if (role !== "admin") {
+      next(new UnauthorizedError("You lack admin permissions"));
+    }
 
     try {
       await AdminModel.getById(profileId);

@@ -44,6 +44,7 @@ export const register = async (req, res, next) => {
 
 export const logIn = async (req, res, next) => {
   const { username, password } = req.body;
+  const { as: role } = req.query;
 
   try {
     const user = await ProfileService.login(username, password);
@@ -52,7 +53,7 @@ export const logIn = async (req, res, next) => {
       throw new LoginError("Username or password is incorrect");
     }
 
-    const payload = { id: user.id, username: user.username, email: user.email };
+    const payload = { id: user.id, username: user.username, email: role };
 
     const token = generateToken(payload);
 
