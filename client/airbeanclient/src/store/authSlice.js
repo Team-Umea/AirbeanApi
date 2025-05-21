@@ -40,7 +40,6 @@ const authSlice = createSlice({
       state.username = "";
       state.email = "";
       state.userID = "";
-      localStorage.removeItem("lastPath");
     },
   },
   extraReducers: (builder) => {
