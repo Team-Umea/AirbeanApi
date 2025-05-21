@@ -7,7 +7,7 @@ const GhostButton = ({ onClick, type = "button", children, className, props }) =
       onClick={onClick}
       {...props}
       className={cn(
-        "py-2! px-6! flex justify-center items-center gap-x-4 rounded-md text-gray-100 w-full bg-gray-300 transition-all duration-200 ease cursor-pointer hover:opacity-80",
+        "py-2! px-6! flex justify-center items-center gap-x-4 rounded-md text-gray-700 w-full bg-amber-200 transition-all duration-200 ease cursor-pointer hover:opacity-80",
         className
       )}>
       {children}

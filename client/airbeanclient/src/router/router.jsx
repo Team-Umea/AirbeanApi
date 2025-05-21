@@ -11,6 +11,10 @@ import Login from "../pages/Login";
 import Cart from "../pages/Cart";
 import AccessRedirect from "../components/protectedRoute/AccessRedirect";
 import ProductPage from "../pages/ProductPage";
+import AdminPage from "../pages/Admin";
+import MangeProductsPage from "../pages/ManageProducts";
+import ManageDiscountPage from "../pages/ManageDiscount";
+import AdminLayout from "../layout/AdminLayout";
 
 const router = createBrowserRouter([
   {
@@ -64,6 +68,28 @@ const router = createBrowserRouter([
             <Orderstatus />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "admin",
+        element: <AdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <AdminPage />,
+          },
+          {
+            path: "produkter",
+            element: <MangeProductsPage />,
+          },
+          {
+            path: "rabatter",
+            element: <ManageDiscountPage />,
+          },
+          {
+            index: true,
+            element: <AdminPage />,
+          },
+        ],
       },
       {
         path: "*",
