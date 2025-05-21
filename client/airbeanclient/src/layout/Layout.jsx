@@ -31,7 +31,7 @@ export default function Layout() {
   return (
     <div className="layout-wrapper">
       <Navbar />
-      <main className="main-content">
+      <main className="main-content min-h-screen">
         <Outlet />
       </main>
       <Toaster

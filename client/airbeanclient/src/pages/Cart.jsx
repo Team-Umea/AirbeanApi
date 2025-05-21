@@ -1,123 +1,119 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-    increaseQuantity,
-    decreaseQuantity,
-    clearCart,
-    applyDiscount,
-} from "../store/cartSlice";
+import { increaseQuantity, decreaseQuantity, clearCart, applyDiscount } from "../store/cartSlice";
 import "../styles/Cart.css";
 import PrimaryButton from "../components/btn/PrimaryButton";
 
 const Cart = () => {
-    const dispatch = useDispatch();
-    const cartItems = useSelector((state) => state.cart.items);
-    const discount = useSelector((state) => state.cart.discount);
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
+  const discount = useSelector((state) => state.cart.discount);
 
-    const [discountCode, setDiscountCode] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+  const [discountCode, setDiscountCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-    const total = cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-    );
+  const total = cartItems.reduce((sum, item) => sum + item.cost * item.quantity, 0);
 
-    const discountedTotal = total - total * discount.amount;
+  const discountedTotal = total - total * discount.amount;
 
-    useEffect(() => {
+  useEffect(() => {
     const savedDiscount = localStorage.getItem("discount");
     if (savedDiscount) {
-        try {
-            const parsed = JSON.parse(savedDiscount);
-            if (parsed.code && parsed.amount) {
-                dispatch(applyDiscount(parsed));
-            }
-        } catch (err) {
-            console.error("Fel vid inläsning av rabatt från localStorage:", err);
-                }   
-            }
-        }, [dispatch]);
-
-        const handleApplyDiscount = () => {
-            const code = discountCode.trim().toLowerCase();
-
-        if (code === "kaffe10") {
-            const discountData = { code: "kaffe10", amount: 0.1 };
-            dispatch(applyDiscount(discountData));
-            localStorage.setItem("discount", JSON.stringify(discountData));
-            setErrorMessage("");
-        } else {
-            dispatch(applyDiscount({ code: null, amount: 0 }));
-            localStorage.removeItem("discount");
-            setErrorMessage("Ogiltig rabattkod");
+      try {
+        const parsed = JSON.parse(savedDiscount);
+        if (parsed.code && parsed.amount) {
+          dispatch(applyDiscount(parsed));
         }
-    };
+      } catch (err) {
+        console.error("Fel vid inläsning av rabatt från localStorage:", err);
+      }
+    }
+  }, [dispatch]);
 
+  const handleApplyDiscount = () => {
+    const code = discountCode.trim().toLowerCase();
 
-    return (
-        <div className="cart-page">
-            <h2 className="title-coofee">Din kaffekorg</h2>
+    if (code === "kaffe10") {
+      const discountData = { code: "kaffe10", amount: 0.1 };
+      dispatch(applyDiscount(discountData));
+      localStorage.setItem("discount", JSON.stringify(discountData));
+      setErrorMessage("");
+    } else {
+      dispatch(applyDiscount({ code: null, amount: 0 }));
+      localStorage.removeItem("discount");
+      setErrorMessage("Ogiltig rabattkod");
+    }
+  };
 
-            {cartItems.length === 0 ? (
-                <p>Inga bönor i sikte, Det ser ut som att du glömt klicka hem ditt kaffe. En tom kaffekorg gör ingen pigg!</p>
-            ) : (
-                <div className="cart-items">
-                    {cartItems.map((item) => (
-                        <div key={item.id} className="cart-item">
-                            <div className="cart-item-info">
-                                <span>{item.name}</span>
-                                <span>{item.price * item.quantity} kr</span>
-                            </div>
-                            <div className="cart-item-controls">
-                                <button onClick={() => dispatch(decreaseQuantity(item.id))}>-</button>
-                                <span>{item.quantity}</span>
-                                <button onClick={() => dispatch(increaseQuantity(item.id))}>+</button>
-                            </div>
-                        </div>
-                    ))}
-                    <button className="clear-cart-btn" onClick={() => dispatch(clearCart())}>
-                        Töm varukorg
-                    </button>
-                </div>
-            )}
+  return (
+    <div className="cart-page">
+      <h2 className="title-coofee">Din kaffekorg</h2>
 
-            {cartItems.length > 0 && (
-                <div className="discount-code-section">
-                    <input
-                        type="text"
-                        placeholder="Ange rabattkod"
-                        value={discountCode}
-                        onChange={(e) => setDiscountCode(e.target.value)}
-                        className="discount-input"
-                    />
-                    <button onClick={handleApplyDiscount} className="apply-discount-btn">
-                        Använd
-                    </button>
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                    {discount.amount > 0 && (
-                        <p className="success-message">
-                            Rabattkod "{discount.code}" tillämpad! Du får {discount.amount * 100}% rabatt.
-                        </p>
-                    )}
-                </div>
-            )}
-
-                <div className="cart-total">
-                {discount.amount > 0 ? (
-                    <>
-                    <h3 className="text-gray-500 line-through">Ordinarie pris: {total.toFixed(2)} kr</h3>
-                    <h2 className="text-green-600 font-bold mt-1">Rabatterat pris: {discountedTotal.toFixed(2)} kr</h2>
-                    </>
-                ) : (
-                    <h3>Totalt: {total.toFixed(2)} kr</h3>
-                )}
-                </div>
-
-            <PrimaryButton onClick={() => console.log("Går till betalning")}>
-                Gå till betalning
-            </PrimaryButton>
+      {cartItems.length === 0 ? (
+        <p>
+          Inga bönor i sikte, Det ser ut som att du glömt klicka hem ditt kaffe. En tom kaffekorg
+          gör ingen pigg!
+        </p>
+      ) : (
+        <div className="cart-items">
+          {cartItems.map((item) => (
+            <div key={item.id} className="cart-item">
+              <div className="cart-item-info">
+                <span>{item.product_name}</span>
+                <span>{item.cost * item.quantity} kr</span>
+              </div>
+              <div className="cart-item-controls">
+                <button onClick={() => dispatch(decreaseQuantity(item.id))}>-</button>
+                <span>{item.quantity}</span>
+                <button onClick={() => dispatch(increaseQuantity(item.id))}>+</button>
+              </div>
+            </div>
+          ))}
+          <button className="clear-cart-btn" onClick={() => dispatch(clearCart())}>
+            Töm varukorg
+          </button>
         </div>
-    );
+      )}
+
+      {cartItems.length > 0 && (
+        <div className="discount-code-section">
+          <input
+            type="text"
+            placeholder="Ange rabattkod"
+            value={discountCode}
+            onChange={(e) => setDiscountCode(e.target.value)}
+            className="discount-input"
+          />
+          <button onClick={handleApplyDiscount} className="apply-discount-btn">
+            Använd
+          </button>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          {discount.amount > 0 && (
+            <p className="success-message">
+              Rabattkod "{discount.code}" tillämpad! Du får {discount.amount * 100}% rabatt.
+            </p>
+          )}
+        </div>
+      )}
+
+      <div className="cart-total">
+        {discount.amount > 0 ? (
+          <>
+            <h3 className="text-gray-500 line-through">Ordinarie pris: {total.toFixed(2)} kr</h3>
+            <h2 className="text-green-600 font-bold mt-1">
+              Rabatterat pris: {discountedTotal.toFixed(2)} kr
+            </h2>
+          </>
+        ) : (
+          <h3>Totalt: {total.toFixed(2)} kr</h3>
+        )}
+      </div>
+
+      <PrimaryButton onClick={() => console.log("Går till betalning")}>
+        Gå till betalning
+      </PrimaryButton>
+    </div>
+  );
 };
 
 export default Cart;

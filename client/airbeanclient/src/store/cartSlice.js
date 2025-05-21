@@ -16,11 +16,13 @@ const cartSlice = createSlice({
     addToCart: (state, action) => {
       const product = action.payload;
       const existing = state.items.find((item) => item.id === product.id);
+
       if (existing) {
         existing.quantity += 1;
       } else {
         state.items.push({ ...product, quantity: 1 });
       }
+
       saveToLocalStorage(state.items);
     },
     removeFromCart: (state, action) => {
