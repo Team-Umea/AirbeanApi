@@ -1,21 +1,20 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar/navbar";
+import Footer from "../components/footer/footer";
 import { Toaster } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useRef } from "react";
-import { getQueryParams } from "../lib/utitls";
-import Footer from "../components/footer/footer";
+import { useEffect } from "react";
 
 export default function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const prevPathRef = useRef(location.pathname);
 
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
     dispatch({ type: "AUTHENTICATE" });
+    dispatch({ type: "PRODUCTS" });
   }, []);
 
   useEffect(() => {

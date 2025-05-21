@@ -11,6 +11,7 @@ import Login from "../pages/Login";
 import Cart from "../pages/Cart";
 import Orderplaced from "../pages/Orderplaced";
 import AccessRedirect from "../components/protectedRoute/AccessRedirect";
+import ProductPage from "../pages/ProductPage";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: <Cart />,
+      },
+      {
+        path: "meny",
+        element: <ProductPage />,
       },
       {
         path: "profil",

@@ -34,3 +34,14 @@ export const getMe = async () => {
     throw err;
   }
 };
+
+export const getProducts = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/products?limit=100`, {
+      withCredentials: true,
+    });
+    return response.data.data;
+  } catch (err) {
+    throw err;
+  }
+};

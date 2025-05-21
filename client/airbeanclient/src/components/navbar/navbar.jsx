@@ -13,7 +13,7 @@ export default function Navbar() {
       <div className="navbar-container">
         <h1 className="navbar-logo">Kaffe.com</h1>
         <div className="navbar-links">
-          <Link to="/">Meny</Link>
+          <Link to="/meny">Meny</Link>
           <Link to="/about">Vårt kaffe</Link>
           <Link to="/profil">Min profil</Link>
           <Link to="/orderstatus">Orderstatus</Link>
