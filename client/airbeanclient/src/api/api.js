@@ -18,6 +18,14 @@ export const login = async (data) => {
   }
 };
 
+export const logout = async () => {
+  try {
+    return await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const register = async (data) => {
   try {
     const response = await axios.post(`${API_URL}/auth/register`, data, { withCredentials: true });
