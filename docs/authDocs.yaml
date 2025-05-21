@@ -87,6 +87,26 @@ paths:
         "401":
           description: Unauthorized
 
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Log out the current user
+      responses:
+        "200":
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Logged out
+
 components:
   securitySchemes:
     bearerAuth:
