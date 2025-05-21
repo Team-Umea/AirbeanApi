@@ -28,6 +28,8 @@ paths:
           description: User registered successfully
         "400":
           description: Invalid input
+        "409":
+          description: Username or email already exists
 
   /auth/login:
     post:
