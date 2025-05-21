@@ -8,7 +8,8 @@ import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
-import Cart from '../pages/Cart';
+import Cart from "../pages/Cart";
+import Orderplaced from "../pages/Orderplaced";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
       },
       {
         path: "cart",
-        element: < Cart />
+        element: <Cart />,
       },
       {
         path: "profil",
@@ -48,6 +49,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Orderstatus />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orderplaced",
+        element: (
+          <ProtectedRoute>
+            <Orderplaced />
           </ProtectedRoute>
         ),
       },
