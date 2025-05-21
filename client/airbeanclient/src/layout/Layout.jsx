@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
 import { getQueryParams } from "../lib/utitls";
+import Footer from "../components/footer/footer";
 
 export default function Layout() {
   const location = useLocation();
@@ -45,6 +46,7 @@ export default function Layout() {
         }}
         richColors
       />
+      <Footer />
     </div>
   );
 }
