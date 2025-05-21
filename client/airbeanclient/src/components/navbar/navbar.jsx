@@ -26,18 +26,22 @@ export default function Navbar() {
         onClick={() => setMenuOpen(false)}>
         Vårt kaffe
       </Link>
-      <Link
-        to="/profil"
-        className="hover:text-yellow-400 transition-colors"
-        onClick={() => setMenuOpen(false)}>
-        Min profil
-      </Link>
-      <Link
-        to="/orderstatus"
-        className="hover:text-yellow-400 transition-colors"
-        onClick={() => setMenuOpen(false)}>
-        Orderstatus
-      </Link>
+      {isAuthenticated && (
+        <Link
+          to="/profil"
+          className="hover:text-yellow-400 transition-colors"
+          onClick={() => setMenuOpen(false)}>
+          Min profil
+        </Link>
+      )}
+      {isAuthenticated && (
+        <Link
+          to="/orderstatus"
+          className="hover:text-yellow-400 transition-colors"
+          onClick={() => setMenuOpen(false)}>
+          Orderstatus
+        </Link>
+      )}
       {!isAuthenticated && (
         <Link
           to="/register"
@@ -139,20 +143,24 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}>
                 Vårt kaffe
               </Link>,
-              <Link
-                key="profil"
-                to="/profil"
-                className="hover:text-yellow-400 transition-colors"
-                onClick={() => setMenuOpen(false)}>
-                Min profil
-              </Link>,
-              <Link
-                key="orderstatus"
-                to="/orderstatus"
-                className="hover:text-yellow-400 transition-colors"
-                onClick={() => setMenuOpen(false)}>
-                Orderstatus
-              </Link>,
+              isAuthenticated && (
+                <Link
+                  key="profil"
+                  to="/profil"
+                  className="hover:text-yellow-400 transition-colors"
+                  onClick={() => setMenuOpen(false)}>
+                  Min profil
+                </Link>
+              ),
+              isAuthenticated && (
+                <Link
+                  key="orderstatus"
+                  to="/orderstatus"
+                  className="hover:text-yellow-400 transition-colors"
+                  onClick={() => setMenuOpen(false)}>
+                  Orderstatus
+                </Link>
+              ),
               !isAuthenticated && (
                 <Link
                   key="register"
