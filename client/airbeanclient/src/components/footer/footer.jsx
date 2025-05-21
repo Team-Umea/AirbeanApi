@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import drone from "../../assets/drone.svg";
 
+const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
 const Footer = () => (
   <footer
     className="text-white py-6 mt-12"
@@ -10,6 +12,7 @@ const Footer = () => (
       <div className="flex items-center justify-center lg:justify-start">
         <Link
           to="/"
+          onClick={scrollToTop}
           className="flex items-center hover:opacity-80 transition-opacity"
         >
           <img
@@ -35,6 +38,7 @@ const Footer = () => (
           <li>
             <Link
               to="/"
+              onClick={scrollToTop}
               className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
             >
               Meny
@@ -43,6 +47,7 @@ const Footer = () => (
           <li>
             <Link
               to="/about"
+              onClick={scrollToTop}
               className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
             >
               Vårt kaffe
@@ -51,6 +56,7 @@ const Footer = () => (
           <li>
             <Link
               to="/profil"
+              onClick={scrollToTop}
               className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
             >
               Profil
@@ -59,6 +65,7 @@ const Footer = () => (
           <li>
             <Link
               to="/cart"
+              onClick={scrollToTop}
               className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
             >
               Kundvagn
