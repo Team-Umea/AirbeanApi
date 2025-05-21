@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "../api/api";
 import { Loader2 } from "lucide-react";
+import ProductListAdmin from "../components/products/ProductListAdmin";
 
 const MangeProductsPage = () => {
   const isLoadingProducts = useSelector((state) => state.product.isLoading);
@@ -65,7 +66,7 @@ const MangeProductsPage = () => {
             <Loader2 className="h-10 w-10 animate-spin" />
           </div>
         ) : (
-          <ProductList products={renderedProducts} />
+          <ProductListAdmin products={renderedProducts} />
         )}
       </MaxWidthWrapper>
     </div>

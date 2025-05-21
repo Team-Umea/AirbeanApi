@@ -3,12 +3,14 @@ import authReducer from "./authSlice";
 import productReducer from "./productSlice";
 import authenticateUser from "./middlewares/authMiddleware";
 import getProducts from "./middlewares/productMiddleware";
-import cartReducer from '../store/cartSlice';
+import cartReducer from "../store/cartSlice";
+import manageProductReducer from "./manageProductSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   product: productReducer,
   cart: cartReducer,
+  manageProduct: manageProductReducer,
 });
 
 const store = configureStore({
