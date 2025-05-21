@@ -8,6 +8,7 @@ import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
+import Cart from '../pages/Cart';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "cart",
+        element: < Cart />
       },
       {
         path: "profil",
