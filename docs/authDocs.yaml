@@ -60,7 +60,7 @@ paths:
                 properties:
                   token:
                     type: string
-        "401":
+        "400":
           description: Invalid credentials
 
   /auth/me:
