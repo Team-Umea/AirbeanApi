@@ -19,10 +19,10 @@ const Cart = () => {
 
     return (
         <div className="cart-page">
-        <h2>Din kaffekorg</h2>
+        <h2 className="title-coofee">Din kaffekorg</h2>
 
         {cartItems.length === 0 ? (
-            <p>Varukorgen är tom.</p>
+            <p>Inga bönor i sikte, Det ser ut som att du glömt klicka hem ditt kaffe. En tom kaffekorg gör ingen pigg!</p>
         ) : (
             <div className="cart-items">
             {cartItems.map((item) => (
