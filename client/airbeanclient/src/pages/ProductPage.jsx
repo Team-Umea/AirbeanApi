@@ -15,7 +15,7 @@ const ProductPage = () => {
           på dig!
         </p>
       </div>
-      <MaxWidthWrapper classNameContainer="w-[90%] max-w-3xl p-10">
+      <MaxWidthWrapper classNameContainer="w-[90%] max-w-5xl p-10">
         <ProductList products={products} />
       </MaxWidthWrapper>
     </div>
