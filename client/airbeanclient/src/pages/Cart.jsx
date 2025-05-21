@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../styles/Cart.css';
 import PrimaryButton from '../components/btn/PrimaryButton';
 
@@ -8,6 +8,12 @@ const Cart = () => {
     { id: 1, name: 'Espresso', price: 35, quantity: 2 },
     { id: 2, name: 'Cappuccino', price: 42, quantity: 1 },
     ]);
+
+    useEffect(() => {
+        localStorage.setItem('cartItems', JSON.stringify(cartItems))
+
+    }, [cartItems])
+    
 
 
     const handleIncrease = (id) => {
