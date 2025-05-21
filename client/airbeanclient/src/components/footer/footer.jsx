@@ -8,8 +8,19 @@ const Footer = () => (
   >
     <div className="container mx-auto px-4 flex flex-col items-center gap-6 lg:grid lg:grid-cols-3 lg:items-center">
       <div className="flex items-center justify-center lg:justify-start">
-        <img src={drone} alt="AirBean Drone Logo" className="w-10 h-10 mr-3" />
-        <span className="font-bold text-xl tracking-wide">AirBean Coffee</span>
+        <Link
+          to="/"
+          className="flex items-center hover:opacity-80 transition-opacity"
+        >
+          <img
+            src={drone}
+            alt="AirBean Drone Logo"
+            className="w-10 h-10 mr-3"
+          />
+          <span className="font-bold text-xl tracking-wide">
+            AirBean Coffee
+          </span>
+        </Link>
       </div>
       <div className="flex flex-col items-center">
         <p className="text-sm text-center">
@@ -34,7 +45,7 @@ const Footer = () => (
               to="/about"
               className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
             >
-              Om oss
+              Vårt kaffe
             </Link>
           </li>
           <li>
