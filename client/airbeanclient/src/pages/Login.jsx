@@ -122,7 +122,7 @@ const Login = () => {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 relative z-10">eller</span>
+                <span className="bg-amber-100 px-2 relative z-10">eller</span>
               </div>
             </div>
             <SecondaryButton onClick={handleRoleToggle} className="mt-12!" disabled={isPending}>
