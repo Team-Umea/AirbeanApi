@@ -3,7 +3,8 @@ import bcrypt from "bcrypt";
 import ProfileModel from "../models/ProfileModel.js";
 import ProfileService from "../services/profileService.js";
 import { ResourceConflictError } from "../errors/resourceErrors.js";
-import { LoginError } from "../errors/authErrors.js";
+import { LoginError, UnauthenticatedError } from "../errors/authErrors.js";
+import AdminService from "../services/adminService.js";
 
 export const register = async (req, res, next) => {
   const { username, password, email } = req.body;
@@ -47,7 +48,19 @@ export const logIn = async (req, res, next) => {
   const { as: role } = req.query;
 
   try {
-    const user = await ProfileService.login(username, password);
+    let user;
+
+    if (role === "admin") {
+      user = await AdminService.login(username, password);
+
+      if (user.error === 400) {
+        throw new LoginError("Username or password is incorrect");
+      } else if (user.error === 401) {
+        throw new UnauthenticatedError("You lack admin permissions");
+      }
+    } else {
+      user = await ProfileService.login(username, password);
+    }
 
     if (!user) {
       throw new LoginError("Username or password is incorrect");

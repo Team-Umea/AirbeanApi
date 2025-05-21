@@ -64,6 +64,8 @@ paths:
                     type: string
         "400":
           description: Invalid credentials
+        "401":
+          description: Not admin
 
   /auth/me:
     get:

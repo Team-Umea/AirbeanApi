@@ -28,6 +28,16 @@ const Admin = {
       throw new UnauthorizedError(`Profile with ID '${profileId}' lacks admin permissions`);
     }
   },
+  getByProfileId: async function (profileId) {
+    const result = await executeQuery(
+      `
+      SELECT id FROM admin
+      WHERE profile_id = $1
+    `,
+      [profileId]
+    );
+    return result[0];
+  },
 };
 
 export default Admin;
