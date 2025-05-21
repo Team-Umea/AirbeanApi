@@ -7,7 +7,7 @@ const initialState = {
   username: "",
   email: "",
   userID: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
 };
 
@@ -40,6 +40,7 @@ const authSlice = createSlice({
       state.username = "";
       state.email = "";
       state.userID = "";
+      localStorage.removeItem("lastPath");
     },
   },
   extraReducers: (builder) => {

@@ -98,10 +98,6 @@ const Login = () => {
     );
   };
 
-  if (isAuthenticated) {
-    return null;
-  }
-
   return (
     <MaxWidthWrapper>
       <div className="mt-20! flex flex-col items-center justify-center">

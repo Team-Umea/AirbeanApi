@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "../api/api";
 import { Loader2 } from "lucide-react";
 import ProductListAdmin from "../components/products/ProductListAdmin";
+import ProductControlsAdmin from "../components/products/ProductControlsAdmin";
 
 const MangeProductsPage = () => {
   const isLoadingProducts = useSelector((state) => state.product.isLoading);
@@ -57,8 +58,9 @@ const MangeProductsPage = () => {
           onSearch={(searchInput) => setSearchQuery(searchInput)}
           className="mt-20"
         />
+        <ProductControlsAdmin />
       </div>
-      <MaxWidthWrapper classNameContainer="w-[90%] max-w-5xl px-10 pb-10 pt-4">
+      <MaxWidthWrapper classNameContainer="w-[90%] max-w-5xl px-10 pb-10">
         {error ? (
           <h2>Ett fel uppstod vid hämtning av produkter</h2>
         ) : isPending ? (
