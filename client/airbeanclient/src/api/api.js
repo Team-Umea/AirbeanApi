@@ -35,9 +35,13 @@ export const getMe = async () => {
   }
 };
 
-export const getProducts = async () => {
+export const getProducts = async (searchQuery) => {
   try {
-    const response = await axios.get(`${API_URL}/api/products?limit=100`, {
+    const baseQuery = `${API_URL}/api/products?limit=100`;
+
+    const query = `${baseQuery}${searchQuery ? `&search=${searchQuery}` : ""}`;
+
+    const response = await axios.get(query, {
       withCredentials: true,
     });
     return response.data.data;
