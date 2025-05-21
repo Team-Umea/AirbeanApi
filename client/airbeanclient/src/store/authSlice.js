@@ -7,6 +7,8 @@ const initialState = {
   username: "",
   email: "",
   userID: null,
+  isLoading: false,
+  error: null,
 };
 
 export const authenticate = createAsyncThunk("auth/authenticateUser", async () => {
@@ -43,13 +45,27 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(authenticate.fulfilled, (state, action) => {
       const payload = action.payload;
-      console.log("Redux payalod: ", payload);
 
       state.isAuthenticated = true;
       state.isAdmin = payload.role === "admin";
       state.username = payload.username;
       state.email = payload.email;
       state.userID = payload.id;
+      state.isLoading = false;
+      state.error = null;
+    });
+    builder.addCase(authenticate.rejected, (state, action) => {
+      state.isAuthenticated = false;
+      state.isAdmin = false;
+      state.username = "";
+      state.email = "";
+      state.userID = "";
+      state.isLoading = false;
+      state.error = "Failed to authenicate user";
+    });
+    builder.addCase(authenticate.pending, (state, action) => {
+      state.isLoading = true;
+      state.error = null;
     });
   },
 });

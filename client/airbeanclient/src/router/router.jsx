@@ -10,6 +10,7 @@ import Register from "../pages/Register";
 import Login from "../pages/Login";
 import Cart from "../pages/Cart";
 import Orderplaced from "../pages/Orderplaced";
+import AccessRedirect from "../components/protectedRoute/AccessRedirect";
 
 const router = createBrowserRouter([
   {
@@ -26,11 +27,19 @@ const router = createBrowserRouter([
       },
       {
         path: "register",
-        element: <Register />,
+        element: (
+          <AccessRedirect>
+            <Register />
+          </AccessRedirect>
+        ),
       },
       {
         path: "login",
-        element: <Login />,
+        element: (
+          <AccessRedirect>
+            <Login />
+          </AccessRedirect>
+        ),
       },
       {
         path: "cart",
