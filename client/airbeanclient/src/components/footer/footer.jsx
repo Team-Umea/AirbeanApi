@@ -22,22 +22,34 @@ const Footer = () => (
       <nav className="flex justify-center lg:justify-end">
         <ul className="flex flex-col md:flex-row gap-4 text-sm items-center">
           <li>
-            <Link to="/" className="hover:underline underline-offset-4">
+            <Link
+              to="/"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
               Meny
             </Link>
           </li>
           <li>
-            <Link to="/about" className="hover:underline underline-offset-4">
+            <Link
+              to="/about"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
               Om oss
             </Link>
           </li>
           <li>
-            <Link to="/profil" className="hover:underline underline-offset-4">
+            <Link
+              to="/profil"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
               Profil
             </Link>
           </li>
           <li>
-            <Link to="/cart" className="hover:underline underline-offset-4">
+            <Link
+              to="/cart"
+              className="hover:underline underline-offset-4 hover:text-yellow-400 transition-colors"
+            >
               Kundvagn
             </Link>
           </li>
