@@ -17,9 +17,8 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
-    sessionStorage.setItem("origin", location.pathname);
-    return <Navigate to={`/login?origin=${encodeURIComponent(location.pathname)}`} replace />;
+    return <Navigate to="/login" />;
   }
 
-  return children;
+  return <>{children}</>;
 }

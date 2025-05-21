@@ -28,6 +28,8 @@ const loginSchema = z.object({
 
 const Login = () => {
   const location = useLocation();
+  const role = getQueryParams(location).get("as");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -40,7 +42,7 @@ const Login = () => {
       dispatch(setUsername(data.username));
       dispatch(setEmail(data.email));
 
-      if (data.role && data.role === "admin") {
+      if (role === "admin") {
         dispatch(setIsAdmin(true));
       }
 
@@ -48,8 +50,9 @@ const Login = () => {
 
       if (role === "admin") {
         navigate("/admin");
+        console.log("Navigate to admin plase");
       } else {
-        navigate("/");
+        navigate("/profil");
       }
     },
     onError: (err) => {
@@ -70,8 +73,6 @@ const Login = () => {
       toast.error(errorMessage);
     },
   });
-
-  const role = getQueryParams(location).get("as");
 
   const { isPending } = loginMutation;
 

@@ -42,7 +42,7 @@ const ProductPage = () => {
   const isPending = isLoadingProducts || isFetchingNewProducts || isLoading;
 
   return (
-    <div className="">
+    <div>
       <div className="mx-auto w-[90%] max-w-5xl p-10">
         <h1 className="text-3xl font-bold text-amber-700"> Upptäck Din Nästa Kaffefavorit!</h1>
         <p className="mt-4! text-lg font-medium text-gray-700">

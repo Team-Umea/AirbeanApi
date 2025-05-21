@@ -43,7 +43,7 @@ const Register = () => {
       }
 
       toast.success("Gratis! Ditt konto har skapats");
-      navigate("/");
+      navigate("/profil");
     },
     onError: (err) => {
       let errorMessage = "";
