@@ -8,6 +8,7 @@ import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
+import AccessRedirect from "../components/protectedRoute/AccessRedirect";
 
 const router = createBrowserRouter([
   {
@@ -24,11 +25,19 @@ const router = createBrowserRouter([
       },
       {
         path: "register",
-        element: <Register />,
+        element: (
+          <AccessRedirect>
+            <Register />
+          </AccessRedirect>
+        ),
       },
       {
         path: "login",
-        element: <Login />,
+        element: (
+          <AccessRedirect>
+            <Login />
+          </AccessRedirect>
+        ),
       },
       {
         path: "profil",

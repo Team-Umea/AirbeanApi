@@ -9,7 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { register } from "../api/api";
 import { toast } from "sonner";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   setEmail,
@@ -28,6 +28,7 @@ const registerSchema = z.object({
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const formMehtods = useForm({ resolver: zodResolver(registerSchema) });
   const registerMutation = useMutation({
     mutationFn: register,

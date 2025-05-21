@@ -12,7 +12,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SecondaryButton from "../components/btn/SecondaryButton";
 import { getQueryParams } from "../lib/utitls";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setEmail,
   setIsAdmin,
@@ -30,6 +30,7 @@ const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const formMehtods = useForm({ resolver: zodResolver(loginSchema) });
   const loginMutation = useMutation({
     mutationFn: login,
@@ -64,6 +65,28 @@ const Login = () => {
 
   const onSubmit = (data) => loginMutation.mutate(data, role);
 
+  const handleRoleToggle = () => {
+    const searchParams = getQueryParams(location);
+
+    if (role === "admin") {
+      searchParams.delete("as");
+    } else {
+      searchParams.set("as", "admin");
+    }
+
+    navigate(
+      {
+        pathname: location.pathname,
+        search: searchParams.toString(),
+      },
+      { replace: false }
+    );
+  };
+
+  if (isAuthenticated) {
+    return null;
+  }
+
   return (
     <MaxWidthWrapper>
       <div className="mt-20! flex flex-col items-center justify-center">
@@ -95,10 +118,7 @@ const Login = () => {
                 <span className="bg-white px-2 relative z-10">eller</span>
               </div>
             </div>
-            <SecondaryButton
-              onClick={() => navigate(role === "admin" ? "/login" : "/login?as=admin")}
-              className="mt-12!"
-              disabled={isPending}>
+            <SecondaryButton onClick={handleRoleToggle} className="mt-12!" disabled={isPending}>
               {role === "admin" ? "Fortsätt som kund" : "Fortsätt som admin"}
             </SecondaryButton>
           </Form>
