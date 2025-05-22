@@ -103,7 +103,7 @@ paths:
     put:
       tags:
         - Products
-      summary: Update an existing product
+      summary: Update an existing product (Admin only)
       parameters:
         - in: path
           name: productId
@@ -137,7 +137,7 @@ paths:
     patch:
       tags:
         - Products
-      summary: Refill product quantity in stock
+      summary: Refill product quantity in stock (Admin only)
       parameters:
         - in: path
           name: productId
@@ -174,7 +174,7 @@ paths:
     delete:
       tags:
         - Products
-      summary: Delete a product
+      summary: Delete a product (Admin only)
       parameters:
         - in: path
           name: productId
@@ -189,6 +189,26 @@ paths:
           description: Unauthenticated
         "404":
           description: Product not found
+
+  /api/products/overview:
+    get:
+      tags:
+        - Products
+      summary: Get product overview statistics (Admin only)
+      responses:
+        "200":
+          description: List of product summaries with order and earnings data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProductOverview"
+        "401":
+          description: Unauthenticated
 
 components:
   schemas:
@@ -246,3 +266,24 @@ components:
     ProductStockQuantity:
       type: number
       minimum: 0
+
+    ProductOverview:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_name:
+          type: string
+        product_info:
+          type: string
+        cost:
+          type: string
+        stock_quantity:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        total_orders:
+          type: integer
+        total_earnings:
+          type: integer
