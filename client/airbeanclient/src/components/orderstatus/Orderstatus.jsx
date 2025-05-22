@@ -53,12 +53,9 @@ const Orderstatus = () => {
         setHasAnyOrder(false);
         return;
       }
-      const res = await axios.get(
-        `${BASE_URL}/api/orders/history/${profileId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/api/orders/history/${profileId}`, {
+        withCredentials: true,
+      });
       const orders = res.data;
       if (orders && orders.length > 0) {
         setOrder(orders[0]);
@@ -82,7 +79,7 @@ const Orderstatus = () => {
     try {
       await axios.patch(
         `${BASE_URL}/api/orders/${orderId}/status`,
-        { status: "delivered" },
+        { newStatus: "delivered" },
         { withCredentials: true }
       );
     } catch (error) {
@@ -174,13 +171,9 @@ const Orderstatus = () => {
         </p>
         <div className="flex flex-col items-center mb-4">
           {secondsLeft > 0 ? (
-            <span className="text-3xl font-mono text-gray-800">
-              {formatTime(secondsLeft)}
-            </span>
+            <span className="text-3xl font-mono text-gray-800">{formatTime(secondsLeft)}</span>
           ) : (
-            <span className="text-2xl font-bold text-gray-800">
-              Tack för din beställning!
-            </span>
+            <span className="text-2xl font-bold text-gray-800">Tack för din beställning!</span>
           )}
         </div>
         <div>
