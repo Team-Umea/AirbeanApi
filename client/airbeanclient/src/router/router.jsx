@@ -14,6 +14,7 @@ import AdminPage from "../pages/Admin";
 import MangeProductsPage from "../pages/ManageProducts";
 import ManageDiscountPage from "../pages/ManageDiscount";
 import AdminLayout from "../layout/AdminLayout";
+import AdminRedirect from "../components/protectedRoute/AdminRedirect";
 
 const router = createBrowserRouter([
   {
@@ -46,7 +47,11 @@ const router = createBrowserRouter([
       },
       {
         path: "cart",
-        element: <Cart />,
+        element: (
+          <AdminRedirect>
+            <Cart />
+          </AdminRedirect>
+        ),
       },
       {
         path: "meny",

@@ -6,6 +6,8 @@ import drone from "../../assets/drone.svg";
 
 export default function Navbar() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const cartItemCount = useSelector((state) =>
@@ -17,32 +19,28 @@ export default function Navbar() {
       <Link
         to="/meny"
         className="hover:text-yellow-400 transition-colors"
-        onClick={() => setMenuOpen(false)}
-      >
+        onClick={() => setMenuOpen(false)}>
         Meny
       </Link>
       <Link
         to="/about"
         className="hover:text-yellow-400 transition-colors"
-        onClick={() => setMenuOpen(false)}
-      >
+        onClick={() => setMenuOpen(false)}>
         Vårt kaffe
       </Link>
       {isAuthenticated && (
         <Link
           to="/profil"
           className="hover:text-yellow-400 transition-colors"
-          onClick={() => setMenuOpen(false)}
-        >
-          Min profil
+          onClick={() => setMenuOpen(false)}>
+          {isAdmin ? "Admin" : "Min profil"}
         </Link>
       )}
       {!isAuthenticated && (
         <Link
           to="/register"
           className="hover:text-yellow-400 transition-colors"
-          onClick={() => setMenuOpen(false)}
-        >
+          onClick={() => setMenuOpen(false)}>
           Skapa konto
         </Link>
       )}
@@ -50,8 +48,7 @@ export default function Navbar() {
         <Link
           to="/login"
           className="hover:text-yellow-400 transition-colors"
-          onClick={() => setMenuOpen(false)}
-        >
+          onClick={() => setMenuOpen(false)}>
           Logga in
         </Link>
       )}
@@ -63,12 +60,8 @@ export default function Navbar() {
       to="/cart"
       className="relative inline-flex items-center group"
       onClick={() => setMenuOpen(false)}
-      aria-label="Kundvagn"
-    >
-      <FaShoppingCart
-        size={20}
-        className="transition-transform group-hover:scale-110"
-      />
+      aria-label="Kundvagn">
+      <FaShoppingCart size={20} className="transition-transform group-hover:scale-110" />
       {cartItemCount > 0 && (
         <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full font-bold leading-none">
           {cartItemCount}
@@ -83,8 +76,7 @@ export default function Navbar() {
       to="/cart"
       className="relative inline-flex items-center group"
       onClick={() => setMenuOpen(false)}
-      aria-label="Kundvagn"
-    >
+      aria-label="Kundvagn">
       <FaShoppingCart
         size={36} // Större ikon i overlayen
         className="transition-transform group-hover:scale-110"
@@ -104,22 +96,14 @@ export default function Navbar() {
         className="fixed top-4 left-4 z-50 w-16 h-16 rounded-full border-gray-950/40 border-1 bg-[#4a2c2a] flex items-center justify-center shadow-lg md:hidden"
         onClick={() => setMenuOpen((open) => !open)}
         aria-label="Öppna meny"
-        type="button"
-      >
+        type="button">
         {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
       </button>
 
       <div className="relative flex items-center justify-between max-w-6xl mx-auto w-full">
         <div className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex justify-center md:justify-start w-full md:w-auto">
-          <Link
-            to="/"
-            className="flex items-center hover:opacity-80 transition-opacity"
-          >
-            <img
-              src={drone}
-              alt="AirBean Drone Logo"
-              className="w-8 h-8 mr-3"
-            />
+          <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <img src={drone} alt="AirBean Drone Logo" className="w-8 h-8 mr-3" />
             <h1 className="text-2xl font-bold">AirBean Coffee</h1>
           </Link>
         </div>
@@ -127,10 +111,10 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-6 flex-1 justify-center">
           {navLinks}
           {/* Kundvagn desktop */}
-          <span className="hidden md:inline-flex">{cartLink}</span>
+          {!isAdmin && <span className="hidden md:inline-flex">{cartLink}</span>}
         </div>
         {/* Kundvagn mobil */}
-        <div className="flex-1 flex justify-end md:hidden">{cartLink}</div>
+        {!isAdmin && <div className="flex-1 flex justify-end md:hidden">{cartLink}</div>}
       </div>
 
       {/* Mobilmeny overlay */}
@@ -143,16 +127,14 @@ export default function Navbar() {
                 key="meny"
                 to="/meny"
                 className="hover:text-yellow-400 transition-colors"
-                onClick={() => setMenuOpen(false)}
-              >
+                onClick={() => setMenuOpen(false)}>
                 Meny
               </Link>,
               <Link
                 key="about"
                 to="/about"
                 className="hover:text-yellow-400 transition-colors"
-                onClick={() => setMenuOpen(false)}
-              >
+                onClick={() => setMenuOpen(false)}>
                 Vårt kaffe
               </Link>,
               isAuthenticated && (
@@ -160,9 +142,8 @@ export default function Navbar() {
                   key="profil"
                   to="/profil"
                   className="hover:text-yellow-400 transition-colors"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Min profil
+                  onClick={() => setMenuOpen(false)}>
+                  {isAdmin ? "Admin" : "Min profil"}
                 </Link>
               ),
               !isAuthenticated && (
@@ -170,8 +151,7 @@ export default function Navbar() {
                   key="register"
                   to="/register"
                   className="hover:text-yellow-400 transition-colors"
-                  onClick={() => setMenuOpen(false)}
-                >
+                  onClick={() => setMenuOpen(false)}>
                   Skapa konto
                 </Link>
               ),
@@ -180,18 +160,14 @@ export default function Navbar() {
                   key="login"
                   to="/login"
                   className="hover:text-yellow-400 transition-colors"
-                  onClick={() => setMenuOpen(false)}
-                >
+                  onClick={() => setMenuOpen(false)}>
                   Logga in
                 </Link>
               ),
             ]
               .filter(Boolean)
               .map((link, i) => (
-                <div
-                  key={i}
-                  className="border-b border-white w-full text-center pb-6 pt-6"
-                >
+                <div key={i} className="border-b border-white w-full text-center pb-6 pt-6">
                   {link}
                 </div>
               ))}
