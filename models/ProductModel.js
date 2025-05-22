@@ -14,27 +14,35 @@ const Product = {
     const validSort = allowedSortFields.includes(sort) ? sort : "created_at";
     const validOrder = order === "asc" ? "ASC" : "DESC";
 
-    const params = [];
     let query = `
-        SELECT 
-            id,
-            product_name,
-            product_info,
-            cost,
-            stock_quantity,
-            created_at
-        FROM product
+      SELECT 
+        p.id,
+        p.product_name,
+        p.product_info,
+        p.cost,
+        p.stock_quantity,
+        p.created_at, 
+        CAST(COALESCE(SUM(o.quantity), 0) AS INTEGER) AS total_orders
+      FROM product p
+      LEFT JOIN order_item o ON o.product_id = p.id
     `;
 
-    if (search) {
-      query += ` WHERE product_name ILIKE $1`;
+    const params = [];
+    let paramIndex = 1;
+
+    if (search.trim()) {
+      query += ` WHERE p.product_name ILIKE $${paramIndex++}`;
       params.push(`%${search.trim()}%`);
-      query += ` ORDER BY ${validSort} ${validOrder} LIMIT $2 OFFSET $3`;
-      params.push(limit, offset);
-    } else {
-      query += ` ORDER BY ${validSort} ${validOrder} LIMIT $1 OFFSET $2`;
-      params.push(limit, offset);
     }
+
+    query += `
+      GROUP BY p.id
+      ORDER BY ${validSort} ${validOrder}
+      LIMIT $${paramIndex++}
+      OFFSET $${paramIndex++}
+    `;
+
+    params.push(limit, offset);
 
     return await executeQuery(query, params);
   },

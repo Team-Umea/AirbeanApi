@@ -100,7 +100,7 @@ export const OrderModel = {
 
   getFullOrderHistory: async (profileId) => {
     const query = `
-      SELECT o.*, oi.id as item_id, oi.product_id, oi.quantity, oi.unit_price
+      SELECT o.*, oi.order_id as item_id, oi.product_id, oi.quantity, oi.unit_price
       FROM orders o
       LEFT JOIN order_item oi ON o.id = oi.order_id
       WHERE o.profile_id = $1
@@ -188,10 +188,9 @@ export const OrderModel = {
         );
       }
 
-      await client.query(
-        `UPDATE orders SET order_status = 'confirmed' WHERE id = $1 RETURNING *`,
-        [orderId]
-      );
+      await client.query(`UPDATE orders SET order_status = 'confirmed' WHERE id = $1 RETURNING *`, [
+        orderId,
+      ]);
 
       await client.query("COMMIT");
 
