@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import SecondaryButton from "../btn/SecondaryButton";
 import { Plus } from "lucide-react";
 import Modal from "../utils/Modal";
+import NewProductForm from "./NewProductForm";
 
 const ProductControlsAdmin = () => {
   const selectedProduct = useSelector((state) => state.manageProduct.product);
@@ -9,9 +10,8 @@ const ProductControlsAdmin = () => {
   const showModal = () => {
     Modal.open(
       ({ close }) => (
-        <div>
-          <p>hej</p>
-          <form action=""></form>
+        <div className="md:w-sm lg:w-md">
+          <NewProductForm />
         </div>
       ),
       "Skapa ny produkt"

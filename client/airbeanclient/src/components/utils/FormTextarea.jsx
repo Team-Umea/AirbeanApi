@@ -1,14 +1,13 @@
 import { useFormContext } from "react-hook-form";
 import { cn } from "../../lib/utitls";
 
-const FormInput = ({
+const FormTextarea = ({
   name,
   label,
-  type = "text",
   placeholder = "",
   className,
   classNameLabel,
-  classNameInput,
+  classNameTextarea,
 }) => {
   const {
     register,
@@ -24,21 +23,20 @@ const FormInput = ({
           {label}
         </label>
       )}
-      <input
-        {...register(name, { valueAsNumber: type === "number" })}
-        type={type}
+      <textarea
+        {...register(name)}
         id={name}
         placeholder={placeholder}
         autoComplete="off"
         spellCheck="false"
         autoCorrect="false"
         className={cn(
-          "py-1! px-2! border-2 rounded-sm transition-all duration-300",
+          "py-1! px-2! border-2 rounded-sm transition-all duration-300 h-[100px] resize-none",
           {
             "border-red-600": error,
             "border-gray-300": !error,
           },
-          classNameInput
+          classNameTextarea
         )}
       />
       {error && <span className="text-red-600 text-sm font-semibold">{error}</span>}
@@ -46,4 +44,4 @@ const FormInput = ({
   );
 };
 
-export default FormInput;
+export default FormTextarea;
