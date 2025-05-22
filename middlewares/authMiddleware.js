@@ -19,24 +19,17 @@ export const authenticate = (req, res, next) => {
   }
 };
 
-//only need to check admin role here since token is already validated
 export const authorizeAdmin = async (req, res, next) => {
-  authenticate(req, res, async (err) => {
-    if (err) {
-      return next(err);
-    }
+  const { id: profileId, role } = req.user;
 
-    const { id: profileId, role } = req.user;
+  if (role !== "admin") {
+    return next(new UnauthorizedError("You lack admin permissions"));
+  }
 
-    //just a way to avoid checking admin table on every request
-    if (role !== "admin") {
-      next(new UnauthorizedError("You lack admin permissions"));
-    }
-
-    try {
-      await AdminModel.getById(profileId);
-    } catch (err) {
-      next(err);
-    }
-  });
+  try {
+    await AdminModel.getById(profileId);
+    next();
+  } catch (err) {
+    next(err);
+  }
 };
