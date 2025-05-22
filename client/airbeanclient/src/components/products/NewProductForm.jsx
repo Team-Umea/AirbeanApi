@@ -5,7 +5,7 @@ import Form from "../utils/Form";
 import FormInput from "../utils/FormInput";
 import PrimaryButton from "../btn/PrimaryButton";
 import FormTextarea from "../utils/FormTextarea";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addProduct } from "../../api/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -34,11 +34,14 @@ const NewProductForm = () => {
 
   const { isPending } = formMehtods;
 
+  const queryClient = useQueryClient();
+
   const addProductMutation = useMutation({
     mutationFn: addProduct,
     onSuccess: (data) => {
       toast.success(`Produkten ${data.product_name} har lagts till och kommer att synas i menyn`);
       Modal.close();
+      queryClient.invalidateQueries(["manageProducts"]);
     },
     onError: (err) => {
       let errorMessage;
