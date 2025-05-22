@@ -10,12 +10,17 @@ import { createOrder } from "../store/orderSlice";
 import "../styles/Cart.css";
 import PrimaryButton from "../components/btn/PrimaryButton";
 import ModalComponent from "../components/utils/Modal";
+import { useNavigate } from "react-router-dom";
+
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const cartItems = useSelector((state) => state.cart.items);
   const discount = useSelector((state) => state.cart.discount);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const userId = useSelector((state) => state.auth.userID);
 
   const [discountCode, setDiscountCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -99,22 +104,23 @@ const Cart = () => {
   onClick={() => {
     close();
 
-    const orderData = {
-      total_amount: discountedTotal,
-      order_status: "pending",
-      order_items: cartItems.map(item => ({
-        product_id: item.id,
-        quantity: item.quantity,
-        unit_price: Number(item.cost),
-      })),
-    };
+              const orderData = {
+                total_amount: discountedTotal,
+                order_status: "pending",
+                profile_id: userId,
+                order_items: cartItems.map((item) => ({
+                  product_id: item.id,
+                  quantity: item.quantity,
+                  unit_price: Number(item.cost),
+                })),
+              };
 
     dispatch(createOrder(orderData))
       .unwrap()
       .then(result => {
         console.log("Beställning skapad:", result);
         dispatch(clearCart());
-        // Visa kvitto eller navigera till bekräftelsesida
+        navigate("/profil"); // ✅ Navigera till profilsidan
       })
       .catch(err => {
         console.error("Fel vid beställning:", err);

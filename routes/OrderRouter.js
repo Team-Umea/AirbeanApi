@@ -14,6 +14,7 @@ const router = express.Router();
 // Skapa order
 router.post("/", authenticate, validateNewOrderBody, OrderController.createOrder);
 
+
 // Hämta aktiv order
 // router.get("/active", OrderController.getActiveOrder);
 
