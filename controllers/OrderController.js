@@ -151,12 +151,20 @@ export const OrderController = {
     try {
       const { id } = orderIdParamSchema.parse(req.params);
       const confirmedOrder = await OrderService.confirmOrder(Number(id));
+      if (!confirmedOrder) {
+        return res
+          .status(404)
+          .json({ error: "Order not found or cannot be confirmed" });
+      }
       res.status(200).json({
         message: "Order confirmed successfully",
         order: confirmedOrder,
       });
     } catch (err) {
-      res.status(500).json({ error: "Failed to confirm order" });
+      console.error("Error in confirmOrder:", err);
+      res
+        .status(500)
+        .json({ error: "Failed to confirm order", details: err.message });
     }
   },
 

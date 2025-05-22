@@ -162,7 +162,7 @@ export const OrderModel = {
 
       for (const item of items) {
         const stockRes = await client.query(
-          `SELECT stock_quantity FROM product_table WHERE product_id = $1 FOR UPDATE`,
+          `SELECT stock_quantity FROM product WHERE id = $1 FOR UPDATE`,
           [item.product_id]
         );
 
@@ -183,7 +183,7 @@ export const OrderModel = {
 
       for (const item of items) {
         await client.query(
-          `UPDATE product_table SET stock_quantity = stock_quantity - $1 WHERE product_id = $2`,
+          `UPDATE product SET stock_quantity = stock_quantity - $1 WHERE id = $2`,
           [item.quantity, item.product_id]
         );
       }
