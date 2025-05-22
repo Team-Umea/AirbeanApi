@@ -3,11 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { increaseQuantity, decreaseQuantity, clearCart, applyDiscount } from "../store/cartSlice";
 import "../styles/Cart.css";
 import PrimaryButton from "../components/btn/PrimaryButton";
+import ModalComponent from "../components/utils/Modal"; 
 
 const Cart = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
   const discount = useSelector((state) => state.cart.discount);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const [discountCode, setDiscountCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -108,10 +110,53 @@ const Cart = () => {
           <h3>Totalt: {total.toFixed(2)} kr</h3>
         )}
       </div>
-
-      <PrimaryButton onClick={() => console.log("Går till betalning")}>
-        Gå till betalning
-      </PrimaryButton>
+        <PrimaryButton
+  onClick={() => {
+    if (!isAuthenticated) {
+      ModalComponent.open(({ close }) => (
+        <div>
+          <h2 className="text-lg font-bold mb-2">Logga in krävs</h2>
+          <p className="mb-4">Du måste vara inloggad för att slutföra din beställning.</p>
+          <div className="flex justify-end space-x-2">
+            <button onClick={close} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+              Avbryt
+            </button>
+            <button
+              onClick={() => {
+                close();
+                window.location.href = "/login";
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Logga in
+            </button>
+          </div>
+        </div>
+      ));
+      return;
+    }
+    ModalComponent.open(({ close }) => (
+      <div>
+        <h2 className="text-lg font-bold mb-2">Bekräfta beställning</h2>
+        <p className="mb-4">Vill du gå vidare till betalning?</p>
+        <div className="flex justify-end space-x-2">
+          <button onClick={close} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+            Avbryt
+          </button>
+          <button
+            onClick={() => {
+              close();
+              alert("Betalning startar...");
+            }}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Gå till betalning
+          </button>
+        </div>
+      </div>
+    ));
+  }}
+>
+  Gå till betalning
+</PrimaryButton>
     </div>
   );
 };

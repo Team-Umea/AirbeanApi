@@ -9,7 +9,7 @@ const Profil = () => {
   const navigate = useNavigate();
 
   const handleLogOut = () => {
-    dispatch(clearAuth);
+    dispatch(clearAuth());
     navigate("/");
   };
 
