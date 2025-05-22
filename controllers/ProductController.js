@@ -23,9 +23,6 @@ export const getProductById = async (req, res, next) => {
 };
 
 export const addProduct = async (req, res, next) => {
-  //when auth-middleware is applied get userId from req.user
-  // const {id:userId} = req.user
-  //make sure req.body is validated
   const productData = { ...req.body, userId: 1 };
 
   try {
@@ -36,14 +33,13 @@ export const addProduct = async (req, res, next) => {
       message: `Product '${newProduct.product_name}' created succesfully`,
       success: true,
     });
-  } catch (error) {
+  } catch (err) {
     next(err);
   }
 };
 
 export const updateProduct = async (req, res, next) => {
   const { productId } = req.params;
-  //make sure req.body is validated
   const productData = { ...req.body, userId: 1 };
 
   try {
@@ -61,7 +57,6 @@ export const updateProduct = async (req, res, next) => {
 
 export const updateProductStockQuantity = async (req, res, next) => {
   const { productId } = req.params;
-  //make sure req.body is validated
   const { stockQuantity } = req.body;
 
   try {
