@@ -3,7 +3,6 @@ import Layout from "../layout/Layout";
 import Menu from "../pages/Menu";
 import About from "../pages/About";
 import Profil from "../pages/Profil";
-import Orderstatus from "../pages/Orderstatus";
 import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
@@ -58,14 +57,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Profil />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "orderstatus",
-        element: (
-          <ProtectedRoute>
-            <Orderstatus />
           </ProtectedRoute>
         ),
       },

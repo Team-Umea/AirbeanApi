@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux";
-import ProductList from "../components/products/ProductList";
 import MaxWidthWrapper from "../components/utils/MaxWidthWrapper";
 import DebounceSearchBar from "../components/utils/DebounceSearchBar";
 import { useEffect, useState } from "react";
@@ -12,7 +11,6 @@ import ProductControlsAdmin from "../components/products/ProductControlsAdmin";
 const MangeProductsPage = () => {
   const isLoadingProducts = useSelector((state) => state.product.isLoading);
   const productList = useSelector((state) => state.product.products);
-
   const [renderedProducts, setRenderedProducts] = useState(productList);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,7 +21,7 @@ const MangeProductsPage = () => {
     error,
   } = useQuery({
     queryFn: () => getProducts(searchQuery),
-    queryKey: ["manageProducts"],
+    queryKey: ["manageProducts", searchQuery],
     enabled: !!searchQuery || searchQuery === "",
   });
 

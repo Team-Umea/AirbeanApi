@@ -5,13 +5,15 @@ import Form from "../utils/Form";
 import FormInput from "../utils/FormInput";
 import PrimaryButton from "../btn/PrimaryButton";
 import FormTextarea from "../utils/FormTextarea";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addProduct } from "../../api/api";
+import { useMutation } from "@tanstack/react-query";
+import { updateProduct } from "../../api/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Modal from "../utils/Modal";
+import { useDispatch, useSelector } from "react-redux";
+import { setProduct } from "../../store/manageProductSlice";
 
-const newProductSchema = z.object({
+const updateProductSchema = z.object({
   productName: z
     .string("Produktnamn måste vara en sträng")
     .nonempty("Produktnamn är obligatoriskt"),
@@ -29,19 +31,27 @@ const newProductSchema = z.object({
     .max(100000, "Du kan inte ha mer än 100 000 av denna vara i lager"),
 });
 
-const NewProductForm = () => {
-  const formMehtods = useForm({ resolver: zodResolver(newProductSchema) });
+const UpdateProductForm = () => {
+  const dispatch = useDispatch();
+  const selectedProduct = useSelector((state) => state.manageProduct.product);
+  const formMehtods = useForm({
+    resolver: zodResolver(updateProductSchema),
+    defaultValues: {
+      productName: selectedProduct.product_name,
+      productInfo: selectedProduct.product_info,
+      cost: selectedProduct.cost,
+      stockQuantity: selectedProduct.stock_quantity,
+    },
+  });
 
   const { isPending } = formMehtods;
 
-  const queryClient = useQueryClient();
-
-  const addProductMutation = useMutation({
-    mutationFn: addProduct,
+  const updateProductMutation = useMutation({
+    mutationFn: updateProduct,
     onSuccess: (data) => {
-      toast.success(`Produkten ${data.product_name} har lagts till och kommer att synas i menyn`);
+      toast.success(`Produkten ${data.product_name} har uppdaterats`);
       Modal.close();
-      queryClient.invalidateQueries(["manageProducts"]);
+      dispatch(setProduct(null));
     },
     onError: (err) => {
       let errorMessage;
@@ -51,7 +61,7 @@ const NewProductForm = () => {
           errorMessage = "Din session har gått ut, logga in igen för att fortsätta";
           break;
         default:
-          errorMessage = "Ett fel uppstod vid skapande av produkt, var snäll och försök igen";
+          errorMessage = "Ett fel uppstod vid uppdatering av produkt, var snäll och försök igen";
           break;
       }
 
@@ -59,7 +69,8 @@ const NewProductForm = () => {
     },
   });
 
-  const onSubmit = (data) => addProductMutation.mutate(data);
+  const onSubmit = (data) =>
+    updateProductMutation.mutate({ ...data, productId: selectedProduct.id });
 
   return (
     <FormProvider {...formMehtods}>
@@ -69,7 +80,7 @@ const NewProductForm = () => {
         <FormInput name="cost" type="number" label="Pris (SEK)" className="mt-8!" />
         <FormInput name="stockQuantity" type="number" label="Antal i lager" className="mt-8!" />
         <PrimaryButton type="submit" className="mt-12!" disabled={isPending}>
-          Skapa
+          Uppdatera
           {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         </PrimaryButton>
       </Form>
@@ -77,4 +88,4 @@ const NewProductForm = () => {
   );
 };
 
-export default NewProductForm;
+export default UpdateProductForm;
