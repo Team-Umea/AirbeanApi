@@ -1,6 +1,7 @@
 import { Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { getQueryParams } from "../../lib/utitls";
 
 const AccessRedirect = ({ children }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -16,7 +17,9 @@ const AccessRedirect = ({ children }) => {
   }
 
   if (isAuthenticated && !isLoading) {
-    return <Navigate to={isAdmin ? "/admin" : "/profil"} />;
+    const origin = sessionStorage.getItem("origin");
+
+    return <Navigate to={origin || (isAdmin ? "/admin" : "/profil")} />;
   }
 
   return <>{children}</>;

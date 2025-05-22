@@ -4,7 +4,6 @@ import { CircleX, Plus } from "lucide-react";
 import Modal from "../utils/Modal";
 import NewProductForm from "./NewProductForm";
 import DangerButton from "../btn/DangerButton";
-import DefaultButton from "../btn/DefaultButton";
 import GhostButton from "../btn/GhostButton";
 import { setProduct } from "../../store/manageProductSlice";
 import AcceptModal from "../utils/AcceptModal";
