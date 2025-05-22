@@ -14,6 +14,9 @@ const router = express.Router();
 // Skapa order
 router.post("/", validateNewOrderBody, OrderController.createOrder);
 
+// Hämta aktiv order
+router.get("/active", authenticate, OrderController.getActiveOrder);
+
 // Hämta full order med items
 router.get(
   "/:orderId/full",
@@ -58,9 +61,6 @@ router.delete("/:id", validateIdParam, OrderController.deleteOrder);
 
 // Bekräfta order och uppdatera lagersaldo
 router.patch("/:id/confirm", validateIdParam, OrderController.confirmOrder);
-
-// Hämta aktiv order
-router.get("/active", authenticate, OrderController.getActiveOrder);
 
 // Hämta orderitems för produkt och datumintervall
 router.get(
