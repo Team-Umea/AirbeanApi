@@ -91,6 +91,22 @@ export const updateProduct = async (data) => {
   }
 };
 
+export const updateProductStockQuantity = async (data) => {
+  const productData = {
+    stockQuantity: data.stockQuantity,
+  };
+
+  try {
+    const response = await axios.patch(`${API_URL}/api/products/${data.productId}`, productData, {
+      withCredentials: true,
+    });
+
+    return response.data.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const deleteProduct = async ({ productId }) => {
   try {
     const response = await axios.delete(`${API_URL}/api/products/${productId}`, {
