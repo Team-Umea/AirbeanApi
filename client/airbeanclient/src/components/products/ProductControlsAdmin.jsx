@@ -7,15 +7,15 @@ const ProductControlsAdmin = () => {
   const selectedProduct = useSelector((state) => state.manageProduct.product);
 
   const showModal = () => {
-    Modal.open(({ close }) => (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">My Modal</h2>
-        <p>This is modal content.</p>
-        <button onClick={close} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-          Close
-        </button>
-      </div>
-    ));
+    Modal.open(
+      ({ close }) => (
+        <div>
+          <p>hej</p>
+          <form action=""></form>
+        </div>
+      ),
+      "Skapa ny produkt"
+    );
   };
 
   return (
