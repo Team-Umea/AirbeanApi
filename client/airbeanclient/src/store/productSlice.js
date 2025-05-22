@@ -23,7 +23,7 @@ const productSlice = createSlice({
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
       const payload = action.payload;
 
-      state.products = payload;
+      state.products = payload.sort((a, b) => b.total_orders - a.total_orders);
       state.isLoading = false;
       state.error = null;
     });
