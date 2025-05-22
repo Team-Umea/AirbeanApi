@@ -40,20 +40,26 @@ export const OrderController = {
       res.status(500).json({ error: "Failed to create order" });
     }
   },
+getOrder: async (req, res) => {
+  try {
+    const { id } = orderIdParamSchema.parse(req.params);
+    console.log('Received ID:', id); // Loggar ID:t från begäran
 
-  getOrder: async (req, res) => {
-    try {
-      const { id } = orderIdParamSchema.parse(req.params);
-      const order = await OrderService.getOrderById(Number(id));
-      if (!order) return res.status(404).json({ error: "Order not found" });
+    const order = await OrderService.getOrderById(Number(id));
+    console.log('Fetched order:', order); // Loggar den hämtade ordern
 
-      res.json(order);
-    } catch (err) {
-      if (err instanceof z.ZodError)
-        return res.status(400).json({ error: err.errors });
-      res.status(500).json({ error: "Failed to fetch order" });
+    if (!order) return res.status(404).json({ error: "Order not found" });
+
+    res.json(order);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      console.log('ZodError:', err.errors); // Loggar ZodError om det finns
+      return res.status(400).json({ error: err.errors });
     }
-  },
+    console.log('Internal Server Error:', err); // Loggar interna serverfel
+    res.status(500).json({ error: "Failed to fetch order" });
+  }
+},
 
   getOrderWithItemsById: async (req, res) => {
     try {
