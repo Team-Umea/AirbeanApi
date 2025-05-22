@@ -30,7 +30,9 @@ const ProductPage = () => {
   }, [productList]);
 
   useEffect(() => {
-    setRenderedProducts(products);
+    if (products) {
+      setRenderedProducts(products.sort((a, b) => b.total_orders - a.total_orders));
+    }
   }, [products]);
 
   useEffect(() => {

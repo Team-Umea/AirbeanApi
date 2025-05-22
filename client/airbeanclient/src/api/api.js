@@ -118,3 +118,15 @@ export const deleteProduct = async ({ productId }) => {
     throw err;
   }
 };
+
+export const getProductOverview = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/products/overview`, {
+      withCredentials: true,
+    });
+
+    return response.data.data;
+  } catch (err) {
+    throw err;
+  }
+};
