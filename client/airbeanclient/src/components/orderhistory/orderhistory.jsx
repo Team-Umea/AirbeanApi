@@ -18,7 +18,13 @@ const OrderHistory = () => {
             withCredentials: true,
           }
         );
-        setOrders(Array.isArray(res.data) ? res.data.slice(0, 10) : []);
+        const uniqueOrders = Array.isArray(res.data)
+          ? res.data.filter(
+              (order, index, self) =>
+                index === self.findIndex((o) => o.id === order.id)
+            )
+          : [];
+        setOrders(uniqueOrders.slice(0, 10));
       } catch (error) {
         console.error("Error fetching order history:", error);
         setOrders([]);
@@ -37,23 +43,33 @@ const OrderHistory = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Orderhistorik</h2>
-      {orders.map((order) => (
-        <div key={order.id} className="mb-6 p-4 bg-white rounded shadow">
-          <div className="font-semibold mb-2">
-            Order #{order.id} - {new Date(order.createdAt).toLocaleString()}
-          </div>
-          <div>Status: {order.order_status}</div>
-          <ul className="mt-2">
-            {order.order_items?.map((item, idx) => (
-              <li key={idx} className="flex justify-between border-b py-1">
-                <span>{item.product_name || item.product_id}</span>
-                <span>x{item.quantity}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <h2 className="text-2xl font-bold mb-4 text-center">Orderhistorik</h2>
+      <ul>
+        {orders.map((order, idx) => (
+          <li
+            key={`${order.id}-${idx}`}
+            className="mb-6 p-4 bg-white rounded shadow"
+          >
+            <span className="font-semibold m-2">
+              Order #{order.id} -{" "}
+              {new Date(order.order_date).toLocaleString("sv-SE", {
+                timeZone: "Europe/Stockholm",
+              })}
+            </span>
+            <span>Status: {order.order_status}</span>
+            <ul>
+              {(order.items || order.order_items)?.map((item, index) => (
+                <li key={`${item.product_id}-${index}`}>
+                  <span className="m-2">
+                    {item.product_name || item.product_id}
+                  </span>
+                  <span className="m-1">x{item.quantity}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

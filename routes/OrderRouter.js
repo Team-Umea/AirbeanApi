@@ -1,5 +1,5 @@
 import express from "express";
-import { OrderController }  from '../controllers/OrderController.js';
+import { OrderController } from "../controllers/OrderController.js";
 import {
   validateNewOrderBody,
   validateIdParam,
@@ -12,11 +12,15 @@ import { authenticate } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // Skapa order
-router.post("/", authenticate, validateNewOrderBody, OrderController.createOrder);
-
+router.post(
+  "/",
+  authenticate,
+  validateNewOrderBody,
+  OrderController.createOrder
+);
 
 // Hämta aktiv order
-// router.get("/active", OrderController.getActiveOrder);
+router.get("/active", OrderController.getActiveOrder);
 
 // Hämta full order med items
 router.get(

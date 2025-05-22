@@ -79,6 +79,6 @@ export const createTables = async () => {
     await executeQuery("COMMIT");
   } catch (err) {
     await executeQuery("ROLLBACK");
-    console.log(`Error creating tables: `, err);
+    console.error(`Error creating tables: `, err);
   }
 };

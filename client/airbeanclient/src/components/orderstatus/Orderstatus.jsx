@@ -4,7 +4,7 @@ import axios from "axios";
 import drone2 from "../../assets/drone2.svg";
 
 const BASE_URL = "http://localhost:3000";
-const DELIVERY_SECONDS = 10;
+const DELIVERY_SECONDS = 90;
 
 const Orderstatus = () => {
   const [order, setOrder] = useState(null);
@@ -12,35 +12,45 @@ const Orderstatus = () => {
   const [showingLatest, setShowingLatest] = useState(false);
   const [hasAnyOrder, setHasAnyOrder] = useState(true);
 
-  // Hämta userID (profileId) och laddningsstatus från Redux
   const profileId = useSelector((state) => state.auth.userID);
   const isLoading = useSelector((state) => state.auth.isLoading);
 
-  // Hämta aktiv order
+  // Hämta aktiv order och dess items
   const fetchOrder = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/orders/active`, {
         withCredentials: true,
       });
       const data = res.data;
-      if (data && data.createdAt) {
+      if (data && data.id) {
         setOrder(data);
         setShowingLatest(false);
         setHasAnyOrder(true);
-        // Beräkna sekunder kvar
-        const orderTime = new Date(data.createdAt).getTime();
+
+        // Timer
+        const orderTime = new Date(data.order_date).getTime();
         const now = Date.now();
-        const elapsed = Math.floor((now - orderTime) / 1000);
+        const elapsed = Math.floor((now - orderTime) / 1000); // Skillnad i sekunder
         const left = Math.max(DELIVERY_SECONDS - elapsed, 0);
-        setSecondsLeft(left);
+
+        if (left > 0) {
+          setSecondsLeft(left);
+        } else {
+          setSecondsLeft(0);
+        }
       } else {
-        // Ingen aktiv order, visa senaste ordern istället
         fetchLatestOrder();
       }
     } catch (error) {
-      console.error(error);
-      // Om ingen aktiv order finns, visa senaste ordern
-      fetchLatestOrder();
+      if (error.response && error.response.status === 404) {
+        console.log("Ingen aktiv order hittades.");
+        setOrder(null);
+        setSecondsLeft(null);
+        setHasAnyOrder(false);
+      } else {
+        console.error("Error fetching order:", error);
+        fetchLatestOrder();
+      }
     }
   };
 
@@ -53,10 +63,12 @@ const Orderstatus = () => {
         setHasAnyOrder(false);
         return;
       }
-      const res = await axios.get(`${BASE_URL}/api/orders/history/${profileId}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${BASE_URL}/api/orders/history/${profileId}`,
+        { withCredentials: true }
+      );
       const orders = res.data;
+
       if (orders && orders.length > 0) {
         setOrder(orders[0]);
         setSecondsLeft(0);
@@ -65,13 +77,11 @@ const Orderstatus = () => {
       } else {
         setOrder(null);
         setSecondsLeft(null);
-        setHasAnyOrder(false);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching order history:", error);
       setOrder(null);
       setSecondsLeft(null);
-      setHasAnyOrder(false);
     }
   };
 
@@ -79,7 +89,7 @@ const Orderstatus = () => {
     try {
       await axios.patch(
         `${BASE_URL}/api/orders/${orderId}/status`,
-        { newStatus: "delivered" },
+        { newStatus: "Levererad" },
         { withCredentials: true }
       );
     } catch (error) {
@@ -87,7 +97,6 @@ const Orderstatus = () => {
     }
   };
 
-  // Kör först när auth inte längre laddar och profileId finns
   useEffect(() => {
     if (!isLoading && profileId) {
       fetchOrder();
@@ -97,19 +106,23 @@ const Orderstatus = () => {
 
   useEffect(() => {
     if (secondsLeft === null) return;
+
     if (secondsLeft > 0) {
       const timer = setInterval(() => {
         setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
       }, 1000);
       return () => clearInterval(timer);
-    } else if (order && order.id) {
-      // När timern är slut, uppdatera status och hämta ordern igen
+    } else if (secondsLeft === 0 && order && order.id && !showingLatest) {
+      // Uppdatera status endast om timern har räknat ner till 0
       (async () => {
-        await updateOrderStatusToDelivered(order.id);
-        fetchOrder();
+        try {
+          await updateOrderStatusToDelivered(order.id);
+          fetchOrder(); // Hämta ordern igen efter statusuppdatering
+        } catch (error) {
+          console.error("Failed to update order status:", error);
+        }
       })();
     }
-    // eslint-disable-next-line
   }, [secondsLeft]);
 
   const formatTime = (secs) => {
@@ -120,7 +133,6 @@ const Orderstatus = () => {
     return `${m}:${s}`;
   };
 
-  // Visa inget om användaren inte har någon order alls
   if (!hasAnyOrder) {
     return null;
   }
@@ -171,21 +183,31 @@ const Orderstatus = () => {
         </p>
         <div className="flex flex-col items-center mb-4">
           {secondsLeft > 0 ? (
-            <span className="text-3xl font-mono text-gray-800">{formatTime(secondsLeft)}</span>
+            <span className="text-3xl font-mono text-gray-800">
+              {formatTime(secondsLeft)}
+            </span>
           ) : (
-            <span className="text-2xl font-bold text-gray-800">Tack för din beställning!</span>
+            <span className="text-2xl font-bold text-gray-800">
+              Tack för din beställning!
+            </span>
           )}
         </div>
         <div>
           <h2 className="text-lg font-semibold mb-2">Artiklar:</h2>
-          <ul className="divide-y divide-gray-200">
+          <ul>
             {order.order_items?.map((item, idx) => (
-              <li key={idx} className="py-2 flex justify-between">
+              <li key={idx}>
                 <span>{item.product_name || item.product_id}</span>
-                <span>x{item.quantity}</span>
+                <span> x {item.quantity}</span>
               </li>
             ))}
           </ul>
+        </div>
+        <div className="text-sm text-gray-500 mt-2 text-center">
+          {order.order_date &&
+            new Date(order.order_date).toLocaleString("sv-SE", {
+              timeZone: "Europe/Stockholm",
+            })}
         </div>
       </div>
     </div>
