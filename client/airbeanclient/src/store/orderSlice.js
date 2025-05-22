@@ -5,9 +5,13 @@ export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (orderData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:3000/api/orders", orderData, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/orders",
+        orderData,
+        {
+          withCredentials: true,
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -28,16 +32,33 @@ export const getOrderByProfileId = createAsyncThunk(
   }
 );
 
+export const fetchOrderHistory = createAsyncThunk(
+  "order/fetchOrderHistory",
+  async (profileId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/orders/history/${profileId}`,
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
     order: null,
+    orders: [], // För orderhistorik
     status: "idle",
     error: null,
   },
   reducers: {
     resetOrder: (state) => {
       state.order = null;
+      state.orders = []; // Rensa orderhistorik
       state.status = "idle";
       state.error = null;
     },
@@ -52,6 +73,17 @@ const orderSlice = createSlice({
         state.order = action.payload;
       })
       .addCase(createOrder.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchOrderHistory.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchOrderHistory.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.orders = action.payload; // Uppdatera orderhistorik
+      })
+      .addCase(fetchOrderHistory.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

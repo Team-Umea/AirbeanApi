@@ -1,43 +1,33 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import axios from "axios";
-
-const BASE_URL = "http://localhost:3000";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrderHistory } from "../../store/orderSlice";
 
 const OrderHistory = () => {
-  const [orders, setOrders] = useState([]);
+  const dispatch = useDispatch();
   const profileId = useSelector((state) => state.auth.userID);
+  const { orders, status, error } = useSelector((state) => state.order);
 
   useEffect(() => {
-    const fetchOrderHistory = async () => {
-      if (!profileId) return;
-      try {
-        const res = await axios.get(
-          `${BASE_URL}/api/orders/history/${profileId}`,
-          {
-            withCredentials: true,
-          }
-        );
-        const uniqueOrders = Array.isArray(res.data)
-          ? res.data.filter(
-              (order, index, self) =>
-                index === self.findIndex((o) => o.id === order.id)
-            )
-          : [];
-        setOrders(uniqueOrders.slice(0, 10));
-      } catch (error) {
-        console.error("Error fetching order history:", error);
-        setOrders([]);
-      }
-    };
-    fetchOrderHistory();
-  }, [profileId]);
+    if (profileId) {
+      dispatch(fetchOrderHistory(profileId));
+    }
+  }, [profileId, dispatch]);
 
   if (!profileId) {
     return <div>Du måste vara inloggad för att se orderhistorik.</div>;
   }
 
-  if (!Array.isArray(orders) || !orders.length) {
+  if (status === "loading") {
+    return <div>Laddar orderhistorik...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="m-8">Fel vid hämtning av orderhistorik: {error}</div>
+    );
+  }
+
+  if (!orders.length) {
     return <div className="m-8">Ingen orderhistorik hittades.</div>;
   }
 
@@ -54,6 +44,12 @@ const OrderHistory = () => {
               Order #{order.id} -{" "}
               {new Date(order.order_date).toLocaleString("sv-SE", {
                 timeZone: "Europe/Stockholm",
+                hour: "2-digit",
+                minute: "2-digit",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                second: undefined,
               })}
             </span>
             <span>Status: {order.order_status}</span>

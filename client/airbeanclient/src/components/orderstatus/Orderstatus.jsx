@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import drone2 from "../../assets/drone2.svg";
+import { fetchOrderHistory } from "../../store/orderSlice";
 
 const BASE_URL = "http://localhost:3000";
-const DELIVERY_SECONDS = 90;
+const DELIVERY_SECONDS = 20;
 
 const Orderstatus = () => {
   const [order, setOrder] = useState(null);
@@ -14,6 +15,7 @@ const Orderstatus = () => {
 
   const profileId = useSelector((state) => state.auth.userID);
   const isLoading = useSelector((state) => state.auth.isLoading);
+  const dispatch = useDispatch();
 
   // Hämta aktiv order och dess items
   const fetchOrder = async () => {
@@ -30,7 +32,7 @@ const Orderstatus = () => {
         // Timer
         const orderTime = new Date(data.order_date).getTime();
         const now = Date.now();
-        const elapsed = Math.floor((now - orderTime) / 1000); // Skillnad i sekunder
+        const elapsed = Math.floor((now - orderTime) / 1000);
         const left = Math.max(DELIVERY_SECONDS - elapsed, 0);
 
         if (left > 0) {
@@ -117,13 +119,14 @@ const Orderstatus = () => {
       (async () => {
         try {
           await updateOrderStatusToDelivered(order.id);
-          fetchOrder(); // Hämta ordern igen efter statusuppdatering
+          fetchOrder(); // Hämta ordern igen
+          dispatch(fetchOrderHistory(profileId)); // Uppdatera orderhistoriken
         } catch (error) {
           console.error("Failed to update order status:", error);
         }
       })();
     }
-  }, [secondsLeft]);
+  }, [secondsLeft, dispatch]);
 
   const formatTime = (secs) => {
     const m = Math.floor(secs / 60)
@@ -207,6 +210,12 @@ const Orderstatus = () => {
           {order.order_date &&
             new Date(order.order_date).toLocaleString("sv-SE", {
               timeZone: "Europe/Stockholm",
+              hour: "2-digit",
+              minute: "2-digit",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              second: undefined,
             })}
         </div>
       </div>
