@@ -22,16 +22,18 @@ const stream = {
   write: (message) => logger.info(message.trim()),
 };
 
-app.use(express.json());
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (_, callback) => {
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
 app.use(morgan("combined", { stream }));
 app.use(cookieParser());
+app.use(express.json());
 
 app.get("/", (_, res) => {
   res.redirect("/docs");
@@ -41,10 +43,6 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/auth", AuthRouter);
 app.use("/api", ApiRouter);
-
-app.get("/api/protected", authenticate, (req, res) => {
-  res.json({ message: `Hello ${req.user.username}, you're authenticated!` });
-});
 
 app.get("/api/hello", (req, res) => {
   res.json("Servern är igång!");

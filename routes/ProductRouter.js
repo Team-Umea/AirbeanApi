@@ -13,7 +13,7 @@ import {
   validateProductIdReqParam,
   validateProductStockQuantityReqBody,
 } from "../validators/productValidator.js";
-import { authorizeAdmin } from "../middlewares/authMiddleware.js";
+import { authenticate, authorizeAdmin } from "../middlewares/authMiddleware.js";
 
 const router = expres.Router();
 
@@ -24,7 +24,7 @@ router.get("/:productId", validateProductIdReqParam, getProductById);
 router.get("/", getProducts);
 
 //authorize admin to modify products
-router.use(authorizeAdmin);
+router.use(authenticate, authorizeAdmin);
 
 //add a new product - needs to be proected so only admins can add a new product
 router.post("/", validateNewProductReqBody, addProduct);
