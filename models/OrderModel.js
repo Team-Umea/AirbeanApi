@@ -208,4 +208,15 @@ export const OrderModel = {
       client.release();
     }
   },
+
+  getActiveOrderByProfileId: async (profileId) => {
+    const query = `
+    SELECT * FROM orders
+    WHERE profile_id = $1 AND order_status = 'pending'
+    ORDER BY order_date DESC
+    LIMIT 1
+  `;
+    const rows = await executeQuery(query, [profileId]);
+    return rows[0] || null;
+  },
 };

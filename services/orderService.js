@@ -110,4 +110,8 @@ export const OrderService = {
   confirmOrder: async (orderId) => {
     return await OrderModel.confirmOrder(orderId);
   },
+
+  getActiveOrderByProfileId: async (profileId) => {
+    return await OrderModel.getActiveOrderByProfileId(profileId);
+  },
 };

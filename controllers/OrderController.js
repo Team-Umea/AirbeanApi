@@ -181,4 +181,19 @@ export const OrderController = {
       res.status(500).json({ error: "Failed to fetch order items" });
     }
   },
+
+  getActiveOrder: async (req, res) => {
+    try {
+      const profile_id = req.user.id;
+      const activeOrder = await OrderService.getActiveOrderByProfileId(
+        profile_id
+      );
+      if (!activeOrder) {
+        return res.status(404).json({ error: "No active order" });
+      }
+      res.json(activeOrder);
+    } catch (err) {
+      res.status(500).json({ error: "Failed to fetch active order" });
+    }
+  },
 };
