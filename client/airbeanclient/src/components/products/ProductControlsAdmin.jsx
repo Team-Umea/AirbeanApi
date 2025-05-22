@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct } from "../../api/api";
 import { toast } from "sonner";
 import UpdateProductForm from "./UpdateProductForm";
+import ProductStockQuantityFrom from "./ProductStockQuantityForm";
 
 const ProductControlsAdmin = () => {
   const dispatch = useDispatch();
@@ -54,6 +55,17 @@ const ProductControlsAdmin = () => {
     );
   };
 
+  const showUpdateProductStockQuantityModal = () => {
+    Modal.open(
+      () => (
+        <div className="md:w-sm lg:w-md">
+          <ProductStockQuantityFrom />
+        </div>
+      ),
+      "Uppdatera lager saldo"
+    );
+  };
+
   const showAcceptDeleteProductModal = () => {
     AcceptModal.open(
       `Är du säker på att du vill radera ${selectedProduct.product_name}?`,
@@ -78,9 +90,9 @@ const ProductControlsAdmin = () => {
               <CircleX />
             </DangerButton>
             <GhostButton onClick={showUpdateProductModal}>Uppdatera</GhostButton>
-            <GhostButton>Fyll på</GhostButton>
+            <GhostButton onClick={showUpdateProductStockQuantityModal}>Fyll på</GhostButton>
           </div>
-          <DefaultButton onClick={cancel}>Avbryt</DefaultButton>
+          <SecondaryButton onClick={cancel}>Avbryt</SecondaryButton>
         </div>
       ) : (
         <SecondaryButton onClick={showCreateProductModal} className="w-fit">
