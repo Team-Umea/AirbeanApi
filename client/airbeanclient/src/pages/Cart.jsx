@@ -5,9 +5,12 @@ import { createOrder } from "../store/orderSlice";
 import "../styles/Cart.css";
 import PrimaryButton from "../components/btn/PrimaryButton";
 import ModalComponent from "../components/utils/Modal";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const cartItems = useSelector((state) => state.cart.items);
   const discount = useSelector((state) => state.cart.discount);
   const userId = useSelector((state) => state.auth.userID);
@@ -99,11 +102,15 @@ const Cart = () => {
                 .then((result) => {
                   console.log("Beställning skapad:", result);
                   dispatch(clearCart());
-                  // Visa kvitto eller navigera till bekräftelsesida
+
+                  dispatch(applyDiscount({ code: null, amount: 0 }));
+                  localStorage.removeItem("discount");
+                  setDiscountCode("");
+
+                  navigate("/profil");
                 })
                 .catch((err) => {
                   console.error("Fel vid beställning:", err);
-                  // Visa felmeddelande till användaren
                 });
             }}>
             Gå till betalning
