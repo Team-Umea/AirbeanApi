@@ -5,7 +5,7 @@ import Form from "../utils/Form";
 import FormInput from "../utils/FormInput";
 import PrimaryButton from "../btn/PrimaryButton";
 import FormTextarea from "../utils/FormTextarea";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProduct } from "../../api/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -44,6 +44,8 @@ const UpdateProductForm = () => {
     },
   });
 
+  const queryClient = useQueryClient();
+
   const { isPending } = formMehtods;
 
   const updateProductMutation = useMutation({
@@ -51,6 +53,7 @@ const UpdateProductForm = () => {
     onSuccess: (data) => {
       toast.success(`Produkten ${data.product_name} har uppdaterats`);
       Modal.close();
+      queryClient.invalidateQueries(["manageProducts"]);
       dispatch(setProduct(null));
     },
     onError: (err) => {
