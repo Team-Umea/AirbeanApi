@@ -61,41 +61,38 @@ export const OrderModel = {
     const query = `
     SELECT 
       o.id as order_id, o.profile_id, o.order_date, o.total_amount, o.order_status,
-      oi.id as item_id, oi.product_id, oi.quantity, oi.unit_price
+      oi.product_id, oi.quantity, oi.unit_price,
+      p.product_name
     FROM orders o
     LEFT JOIN order_item oi ON o.id = oi.order_id
+    LEFT JOIN product p ON oi.product_id = p.id
     WHERE o.profile_id = $1
-    ORDER BY o.order_date DESC, o.id, oi.id
+    ORDER BY o.order_date DESC, o.id
   `;
-
     const rows = await executeQuery(query, [profileId]);
 
-    const ordersMap = new Map();
-
+    const ordersMap = {};
     for (const row of rows) {
-      const orderId = row.order_id;
-      if (!ordersMap.has(orderId)) {
-        ordersMap.set(orderId, {
-          id: orderId,
+      if (!ordersMap[row.order_id]) {
+        ordersMap[row.order_id] = {
+          id: row.order_id,
           profile_id: row.profile_id,
           order_date: row.order_date,
           total_amount: row.total_amount,
           order_status: row.order_status,
-          items: [],
-        });
+          order_items: [],
+        };
       }
-
-      if (row.item_id) {
-        ordersMap.get(orderId).items.push({
-          id: row.item_id,
+      if (row.product_id) {
+        ordersMap[row.order_id].order_items.push({
           product_id: row.product_id,
           quantity: row.quantity,
           unit_price: row.unit_price,
+          product_name: row.product_name,
         });
       }
     }
-
-    return Array.from(ordersMap.values());
+    return Object.values(ordersMap);
   },
 
   getFullOrderHistory: async (profileId) => {
@@ -147,7 +144,7 @@ export const OrderModel = {
         throw { status: 404, message: "Order not found" };
       }
 
-      if (orderRes.rows[0].order_status !== "pending") {
+      if (orderRes.rows[0].order_status !== "Behandlas") {
         throw {
           status: 400,
           message: "Order is not pending and cannot be confirmed",
@@ -189,7 +186,7 @@ export const OrderModel = {
       }
 
       await client.query(
-        `UPDATE orders SET order_status = 'confirmed' WHERE id = $1 RETURNING *`,
+        `UPDATE orders SET order_status = 'Behandlas' WHERE id = $1 RETURNING *`,
         [orderId]
       );
 
@@ -210,13 +207,25 @@ export const OrderModel = {
   },
 
   getActiveOrderByProfileId: async (profileId) => {
-    const query = `
+    const queryOrder = `
     SELECT * FROM orders
-    WHERE profile_id = $1 AND order_status = 'pending'
+    WHERE profile_id = $1 AND order_status = 'Behandlas'
     ORDER BY order_date DESC
     LIMIT 1
   `;
-    const rows = await executeQuery(query, [profileId]);
-    return rows[0] || null;
+    const orders = await executeQuery(queryOrder, [profileId]);
+    if (orders.length === 0) return null;
+
+    const order = orders[0];
+
+    const queryItems = `
+    SELECT oi.product_id, oi.quantity, oi.unit_price, p.product_name
+    FROM order_item oi
+    LEFT JOIN product p ON oi.product_id = p.id
+    WHERE oi.order_id = $1
+  `;
+    const items = await executeQuery(queryItems, [order.id]);
+
+    return { ...order, order_items: items };
   },
 };
