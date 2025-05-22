@@ -18,16 +18,18 @@ const ProductItemAdmin = ({ product }) => {
   };
 
   return (
-    <li className="grid grid-cols-[1fr] grid-rows-[auto_auto_auto] sm:grid-cols-[2fr_1fr] sm:grid-rows-[1fr_1fr] lg:grid-cols-[1fr_2fr_1fr] lg:grid-rows-[1fr] lg:gap-x-6">
-      <DefaultButton
-        onClick={handleToggle}
-        className="gap-2 mr-8! col-start-1 row-start-3 sm:col-start-2 sm:row-start-1 lg:col-start-1 lg:row-start-1 flex-shrink-0">
-        {isSelectedProduct ? <CircleCheck absoluteStrokeWidth /> : <Circle absoluteStrokeWidth />}
-      </DefaultButton>
-      <div className="col-start-1 row-start-1 lg:col-start-2 lg:row-start-1">
+    <li className="flex flex-col gap-y-2">
+      <div className="flex justify-between gap-x-6">
         <p className="text-lg font-semibold text-gray-700">{product.product_name}</p>
-        <p>{product.product_info}</p>
+
+        <DefaultButton
+          onClick={handleToggle}
+          className="gap-2 mr-8! col-start-1 row-start-3 sm:col-start-2 sm:row-start-1 lg:col-start-1 lg:row-start-1 flex-shrink-0">
+          {isSelectedProduct ? <CircleCheck absoluteStrokeWidth /> : <Circle absoluteStrokeWidth />}
+        </DefaultButton>
       </div>
+
+      <p>{product.product_info}</p>
       <div className="flex sm:flex-col items-start gap-x-4 col-start-1 row-start-2 lg:col-start-3 lg:row-start-1">
         <p className="font-medium text-gray-700">{Math.round(product.cost)} SEK</p>
         <p className="flex items-center gap-x-1">{product.stock_quantity} i lager</p>

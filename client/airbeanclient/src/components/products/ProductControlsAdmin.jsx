@@ -92,7 +92,7 @@ const ProductControlsAdmin = () => {
             <GhostButton onClick={showUpdateProductModal}>Uppdatera</GhostButton>
             <GhostButton onClick={showUpdateProductStockQuantityModal}>Fyll på</GhostButton>
           </div>
-          <DefaultButton onClick={cancel}>Avbryt</DefaultButton>
+          <SecondaryButton onClick={cancel}>Avbryt</SecondaryButton>
         </div>
       ) : (
         <SecondaryButton onClick={showCreateProductModal} className="w-fit">
