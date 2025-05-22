@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../layout/Layout";
-import Menu from "../pages/Menu";
 import About from "../pages/About";
 import Profil from "../pages/Profil";
 import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
@@ -15,6 +14,7 @@ import MangeProductsPage from "../pages/ManageProducts";
 import ManageDiscountPage from "../pages/ManageDiscount";
 import AdminLayout from "../layout/AdminLayout";
 import AdminRedirect from "../components/protectedRoute/AdminRedirect";
+import Home from "../pages/Home";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Menu />,
+        element: <Home />,
       },
       {
         path: "about",

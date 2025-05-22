@@ -4,13 +4,25 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { clearAuth } from "../store/authSlice";
 import Orderstatus from "../components/orderstatus/Orderstatus";
 import OrderHistory from "../components/orderhistory/orderhistory";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:3000";
 
 const Profil = () => {
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
+    try {
+      await axios.post(
+        `${BASE_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
     dispatch(clearAuth());
     navigate("/");
   };

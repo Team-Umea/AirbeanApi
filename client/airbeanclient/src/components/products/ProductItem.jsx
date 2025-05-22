@@ -6,8 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { addToCart, removeFromCart } from "../../store/cartSlice";
 import { toast } from "sonner";
+import Badge from "../utils/Badge";
 
-const ProductItem = ({ product }) => {
+const ProductItem = ({ product, index }) => {
   const isInStock = product.stock_quantity > 0;
   const productsInCart = useSelector((state) => state.cart.items);
   const isAdmin = useSelector((state) => state.auth.isAdmin);
@@ -51,7 +52,10 @@ const ProductItem = ({ product }) => {
         </DefaultButton>
       )}
       <div className="col-start-1 row-start-1 lg:col-start-2 lg:row-start-1">
-        <p className="text-lg font-semibold text-gray-700">{product.product_name}</p>
+        <div className="flex gap-x-2">
+          <p className="text-lg font-semibold text-gray-700">{product.product_name}</p>
+          {index === 0 && <Badge className="bg-amber-400">Kundens favorit</Badge>}
+        </div>
         <p>{product.product_info}</p>
       </div>
       <div className="flex sm:flex-col items-start gap-x-4 col-start-1 row-start-2 lg:col-start-3 lg:row-start-1">
