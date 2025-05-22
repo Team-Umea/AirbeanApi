@@ -11,9 +11,12 @@ const initialState = {
   error: null,
 };
 
-export const authenticate = createAsyncThunk("auth/authenticateUser", async () => {
-  return await getMe();
-});
+export const authenticate = createAsyncThunk(
+  "auth/authenticateUser",
+  async () => {
+    return await getMe();
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -54,6 +57,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     });
+    // eslint-disable-next-line
     builder.addCase(authenticate.rejected, (state, action) => {
       state.isAuthenticated = false;
       state.isAdmin = false;
@@ -63,6 +67,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = "Failed to authenicate user";
     });
+    // eslint-disable-next-line
     builder.addCase(authenticate.pending, (state, action) => {
       state.isLoading = true;
       state.error = null;
@@ -70,7 +75,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { setIsAuthenticated, setIsAdmin, setUsername, setEmail, setUserID, clearAuth } =
-  authSlice.actions;
+export const {
+  setIsAuthenticated,
+  setIsAdmin,
+  setUsername,
+  setEmail,
+  setUserID,
+  clearAuth,
+} = authSlice.actions;
 
 export default authSlice.reducer;

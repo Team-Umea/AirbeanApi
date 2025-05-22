@@ -13,6 +13,9 @@ const router = express.Router();
 // Skapa order
 router.post("/", validateNewOrderBody, OrderController.createOrder);
 
+// Hämta aktiv order
+router.get("/active", OrderController.getActiveOrder);
+
 // Hämta full order med items
 router.get(
   "/:orderId/full",
