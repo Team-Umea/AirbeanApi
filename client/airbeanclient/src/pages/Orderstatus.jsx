@@ -1,28 +1,110 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import drone2 from "../assets/drone2.svg";
 
-// Exempel på order-prop, byt ut mot riktig data i din app!
-const exampleOrder = {
-  id: "12345",
-  countdownSeconds: 10,
-  order_items: [
-    { product_name: "Bryggkaffe", quantity: 2 },
-    { product_name: "Latte", quantity: 1 },
-  ],
-};
+const DELIVERY_SECONDS = 10;
 
-const Orderstatus = ({ order = exampleOrder }) => {
-  const [secondsLeft, setSecondsLeft] = useState(order.countdownSeconds);
+const Orderstatus = () => {
+  const [order, setOrder] = useState(null);
+  const [secondsLeft, setSecondsLeft] = useState(null);
+  const [showingLatest, setShowingLatest] = useState(false);
+
+  // Hämta userID (profileId) och laddningsstatus från Redux
+  const profileId = useSelector((state) => state.auth.userID);
+  const isLoading = useSelector((state) => state.auth.isLoading);
+
+  // Hämta aktiv order
+  const fetchOrder = async () => {
+    try {
+      const res = await axios.get("/api/orders/active", {
+        withCredentials: true,
+      });
+      const data = res.data;
+      if (data && data.createdAt) {
+        setOrder(data);
+        setShowingLatest(false);
+        // Beräkna sekunder kvar
+        const orderTime = new Date(data.createdAt).getTime();
+        const now = Date.now();
+        const elapsed = Math.floor((now - orderTime) / 1000);
+        const left = Math.max(DELIVERY_SECONDS - elapsed, 0);
+        setSecondsLeft(left);
+      } else {
+        // Ingen aktiv order, visa senaste ordern istället
+        fetchLatestOrder();
+      }
+    } catch (error) {
+      console.error(error);
+      // Om ingen aktiv order finns, visa senaste ordern
+      fetchLatestOrder();
+    }
+  };
+
+  // Hämta senaste ordern med profileId
+  const fetchLatestOrder = async () => {
+    try {
+      if (!profileId) {
+        setOrder(null);
+        setSecondsLeft(null);
+        return;
+      }
+      const res = await axios.get(`/api/orders/history/${profileId}`, {
+        withCredentials: true,
+      });
+      const orders = res.data;
+      if (orders && orders.length > 0) {
+        setOrder(orders[0]);
+        setSecondsLeft(0);
+        setShowingLatest(true);
+      } else {
+        setOrder(null);
+        setSecondsLeft(null);
+      }
+    } catch (error) {
+      console.error(error);
+      setOrder(null);
+      setSecondsLeft(null);
+    }
+  };
+
+  const updateOrderStatusToDelivered = async (orderId) => {
+    try {
+      await axios.patch(
+        `/api/orders/${orderId}/status`,
+        { status: "delivered" },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error("Kunde inte uppdatera orderstatus:", error);
+    }
+  };
+
+  // Kör först när auth inte längre laddar och profileId finns
+  useEffect(() => {
+    if (!isLoading && profileId) {
+      fetchOrder();
+    }
+    // eslint-disable-next-line
+  }, [isLoading, profileId]);
 
   useEffect(() => {
-    if (secondsLeft <= 0) return;
-    const timer = setInterval(() => {
-      setSecondsLeft((s) => s - 1);
-    }, 1000);
-    return () => clearInterval(timer);
+    if (secondsLeft === null) return;
+    if (secondsLeft > 0) {
+      const timer = setInterval(() => {
+        setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
+      }, 1000);
+      return () => clearInterval(timer);
+    } else if (order && order.id) {
+      // När timern är slut, uppdatera status och hämta ordern igen
+      (async () => {
+        await updateOrderStatusToDelivered(order.id);
+        fetchOrder();
+      })();
+    }
+    // eslint-disable-next-line
   }, [secondsLeft]);
 
-  // Formatera sekunder som mm:ss
   const formatTime = (secs) => {
     const m = Math.floor(secs / 60)
       .toString()
@@ -30,6 +112,10 @@ const Orderstatus = ({ order = exampleOrder }) => {
     const s = (secs % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
+
+  if (isLoading || !profileId || secondsLeft === null || !order) {
+    return <div>Laddar orderstatus...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-amber-100 mt-12">
@@ -64,6 +150,8 @@ const Orderstatus = ({ order = exampleOrder }) => {
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           {secondsLeft > 0
             ? "Din beställning är på väg!"
+            : showingLatest
+            ? "Din senaste order"
             : "Ordern är levererad! 🎉"}
         </h1>
         <p className="text-lg text-gray-800 mb-2 text-center">
@@ -83,7 +171,7 @@ const Orderstatus = ({ order = exampleOrder }) => {
         <div>
           <h2 className="text-lg font-semibold mb-2">Artiklar:</h2>
           <ul className="divide-y divide-gray-200">
-            {order.order_items.map((item, idx) => (
+            {order.order_items?.map((item, idx) => (
               <li key={idx} className="py-2 flex justify-between">
                 <span>{item.product_name || item.product_id}</span>
                 <span>x{item.quantity}</span>
