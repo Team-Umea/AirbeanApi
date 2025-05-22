@@ -1,5 +1,5 @@
 import express from "express";
-import { OrderController } from "../controllers/OrderController.js";
+import { OrderController }  from '../controllers/OrderController.js';
 import {
   validateNewOrderBody,
   validateIdParam,
@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/", validateNewOrderBody, OrderController.createOrder);
 
 // Hämta aktiv order
-router.get("/active", OrderController.getActiveOrder);
+// router.get("/active", OrderController.getActiveOrder);
 
 // Hämta full order med items
 router.get(
