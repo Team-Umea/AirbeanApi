@@ -5,11 +5,13 @@ import Modal from "../utils/Modal";
 import NewProductForm from "./NewProductForm";
 import DangerButton from "../btn/DangerButton";
 import DefaultButton from "../btn/DefaultButton";
+import GhostButton from "../btn/GhostButton";
 import { setProduct } from "../../store/manageProductSlice";
 import AcceptModal from "../utils/AcceptModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct } from "../../api/api";
 import { toast } from "sonner";
+import UpdateProductForm from "./UpdateProductForm";
 
 const ProductControlsAdmin = () => {
   const dispatch = useDispatch();
@@ -30,7 +32,7 @@ const ProductControlsAdmin = () => {
     },
   });
 
-  const showModal = () => {
+  const showCreateProductModal = () => {
     Modal.open(
       () => (
         <div className="md:w-sm lg:w-md">
@@ -41,7 +43,18 @@ const ProductControlsAdmin = () => {
     );
   };
 
-  const showAcceptModal = () => {
+  const showUpdateProductModal = () => {
+    Modal.open(
+      () => (
+        <div className="md:w-sm lg:w-md">
+          <UpdateProductForm />
+        </div>
+      ),
+      "Skapa ny produkt"
+    );
+  };
+
+  const showAcceptDeleteProductModal = () => {
     AcceptModal.open(
       `Är du säker på att du vill radera ${selectedProduct.product_name}?`,
       "Radera produkt",
@@ -58,17 +71,19 @@ const ProductControlsAdmin = () => {
   return (
     <div className="mt-16">
       {selectedProduct ? (
-        <div className="flex justify-between">
-          <div className="flex justify-center items-center gap-x-6">
-            <DangerButton onClick={showAcceptModal}>
+        <div className="flex flex-col items-start gap-y-4 lg:grid lg:grid-cols-[3fr_1fr]">
+          <div className="flex flex-col lg:grid lg:grid-cols-[1fr_1fr_1fr] w-fit gap-4">
+            <DangerButton onClick={showAcceptDeleteProductModal}>
               <span className="font-semibold">Radera produkt</span>
               <CircleX />
             </DangerButton>
+            <GhostButton onClick={showUpdateProductModal}>Uppdatera</GhostButton>
+            <GhostButton>Fyll på</GhostButton>
           </div>
           <DefaultButton onClick={cancel}>Avbryt</DefaultButton>
         </div>
       ) : (
-        <SecondaryButton onClick={showModal} className="w-fit">
+        <SecondaryButton onClick={showCreateProductModal} className="w-fit">
           <span className="font-semibold">Ny produkt</span>
           <Plus />
         </SecondaryButton>
