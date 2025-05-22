@@ -2,6 +2,7 @@ import expres from "express";
 import {
   addProduct,
   deleteProduct,
+  getOverview,
   getProductById,
   getProducts,
   updateProduct,
@@ -16,6 +17,9 @@ import {
 import { authenticate, authorizeAdmin } from "../middlewares/authMiddleware.js";
 
 const router = expres.Router();
+
+//get overview and stats
+router.get("/overview", authenticate, authorizeAdmin, getOverview);
 
 //get product by id
 router.get("/:productId", validateProductIdReqParam, getProductById);

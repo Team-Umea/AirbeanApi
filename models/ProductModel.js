@@ -184,6 +184,22 @@ const Product = {
 
     return result[0];
   },
+  getOverview: async function () {
+    return await executeQuery(`
+      SELECT 
+        p.id,
+        p.product_name,
+        p.product_info,
+        p.cost,
+        p.stock_quantity,
+        p.created_at, 
+        CAST(COALESCE(SUM(o.quantity), 0) AS INTEGER) AS total_orders,
+        CAST(COALESCE(SUM(o.quantity*o.unit_price), 0) AS INTEGER) AS total_earnings
+      FROM product p
+      LEFT JOIN order_item o ON o.product_id = p.id
+      GROUP BY p.id
+    `);
+  },
 };
 
 export default Product;

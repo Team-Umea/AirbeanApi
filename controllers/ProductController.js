@@ -87,3 +87,15 @@ export const deleteProduct = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getOverview = async (req, res, next) => {
+  try {
+    const overview = await Product.getOverview();
+
+    const sortByEarnings = overview.sort((a, b) => b.total_earnings - a.total_earnings);
+
+    res.status(200).json({ data: sortByEarnings, success: true });
+  } catch (err) {
+    next(err);
+  }
+};
