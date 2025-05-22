@@ -95,31 +95,35 @@ const Cart = () => {
           >
             Avbryt
           </button>
-          <button
-            onClick={async () => {
-              close();
+<button
+  onClick={() => {
+    close();
 
-              const orderData = {
-                items: cartItems.map((item) => ({
-                  product_id: item.id,
-                  quantity: item.quantity
-                }))
-              };
+    const orderData = {
+      total_amount: discountedTotal,
+      order_status: "pending",
+      order_items: cartItems.map(item => ({
+        product_id: item.id,
+        quantity: item.quantity,
+        unit_price: Number(item.cost),
+      })),
+    };
 
-              try {
-                await dispatch(createOrder(orderData)).unwrap();
-                dispatch(clearCart());
-                alert("Beställning skickad!");
-                window.location.href = "/orderstatus"; 
-              } catch (error) {
-                console.error("Fel vid beställning:", error);
-                alert("Det gick inte att skicka beställningen.");
-              }
-            }}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            Gå till betalning
-          </button>
+    dispatch(createOrder(orderData))
+      .unwrap()
+      .then(result => {
+        console.log("Beställning skapad:", result);
+        dispatch(clearCart());
+        // Visa kvitto eller navigera till bekräftelsesida
+      })
+      .catch(err => {
+        console.error("Fel vid beställning:", err);
+        // Visa felmeddelande till användaren
+      });
+  }}
+>
+  Gå till betalning
+</button>
         </div>
       </div>
     ));

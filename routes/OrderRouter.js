@@ -7,11 +7,12 @@ import {
   validateOrderStatusBody,
   validateProductDateQuery,
 } from "../validators/orderValidator.js";
+import { authenticate } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // Skapa order
-router.post("/", validateNewOrderBody, OrderController.createOrder);
+router.post("/", authenticate, validateNewOrderBody, OrderController.createOrder);
 
 // Hämta aktiv order
 // router.get("/active", OrderController.getActiveOrder);
