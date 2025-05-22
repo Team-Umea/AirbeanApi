@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import drone2 from "../assets/drone2.svg";
+import drone2 from "../../assets/drone2.svg";
 
+const BASE_URL = "http://localhost:3000";
 const DELIVERY_SECONDS = 10;
 
 const Orderstatus = () => {
   const [order, setOrder] = useState(null);
   const [secondsLeft, setSecondsLeft] = useState(null);
   const [showingLatest, setShowingLatest] = useState(false);
+  const [hasAnyOrder, setHasAnyOrder] = useState(true);
 
   // Hämta userID (profileId) och laddningsstatus från Redux
   const profileId = useSelector((state) => state.auth.userID);
@@ -17,13 +19,14 @@ const Orderstatus = () => {
   // Hämta aktiv order
   const fetchOrder = async () => {
     try {
-      const res = await axios.get("/api/orders/active", {
+      const res = await axios.get(`${BASE_URL}/api/orders/active`, {
         withCredentials: true,
       });
       const data = res.data;
       if (data && data.createdAt) {
         setOrder(data);
         setShowingLatest(false);
+        setHasAnyOrder(true);
         // Beräkna sekunder kvar
         const orderTime = new Date(data.createdAt).getTime();
         const now = Date.now();
@@ -47,36 +50,43 @@ const Orderstatus = () => {
       if (!profileId) {
         setOrder(null);
         setSecondsLeft(null);
+        setHasAnyOrder(false);
         return;
       }
-      const res = await axios.get(`/api/orders/history/${profileId}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${BASE_URL}/api/orders/history/${profileId}`,
+        {
+          withCredentials: true,
+        }
+      );
       const orders = res.data;
       if (orders && orders.length > 0) {
         setOrder(orders[0]);
         setSecondsLeft(0);
         setShowingLatest(true);
+        setHasAnyOrder(true);
       } else {
         setOrder(null);
         setSecondsLeft(null);
+        setHasAnyOrder(false);
       }
     } catch (error) {
       console.error(error);
       setOrder(null);
       setSecondsLeft(null);
+      setHasAnyOrder(false);
     }
   };
 
   const updateOrderStatusToDelivered = async (orderId) => {
     try {
       await axios.patch(
-        `/api/orders/${orderId}/status`,
+        `${BASE_URL}/api/orders/${orderId}/status`,
         { status: "delivered" },
         { withCredentials: true }
       );
     } catch (error) {
-      console.error("Kunde inte uppdatera orderstatus:", error);
+      console.error("Error updating order status:", error);
     }
   };
 
@@ -113,12 +123,17 @@ const Orderstatus = () => {
     return `${m}:${s}`;
   };
 
+  // Visa inget om användaren inte har någon order alls
+  if (!hasAnyOrder) {
+    return null;
+  }
+
   if (isLoading || !profileId || secondsLeft === null || !order) {
     return <div>Laddar orderstatus...</div>;
   }
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-amber-100 mt-12">
+    <div className="flex flex-col items-center justify-start bg-amber-100 mt-12">
       <style>
         {`
           @keyframes drone-fly {

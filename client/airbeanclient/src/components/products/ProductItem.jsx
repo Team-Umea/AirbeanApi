@@ -5,10 +5,12 @@ import coffeeBeanOutline from "../../assets/icons/coffee-bean-outline.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { addToCart, removeFromCart } from "../../store/cartSlice";
+import { toast } from "sonner";
 
 const ProductItem = ({ product }) => {
   const isInStock = product.stock_quantity > 0;
   const productsInCart = useSelector((state) => state.cart.items);
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
 
   const dispatch = useDispatch();
 
@@ -19,6 +21,11 @@ const ProductItem = ({ product }) => {
   }, [productsInCart]);
 
   const handleToggle = () => {
+    if (isAdmin) {
+      toast.error("Som admin kan du inte köpa kaffe");
+      return;
+    }
+
     if (isInCart) {
       dispatch(removeFromCart(product));
     } else {
