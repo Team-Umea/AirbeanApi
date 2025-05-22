@@ -4,6 +4,8 @@ paths:
       tags:
         - Orders
       summary: Create a new order
+      security:
+        - cookieAuth: []
       requestBody:
         required: true
         content:
@@ -56,6 +58,8 @@ paths:
       tags:
         - Orders
       summary: Get a specific order by ID
+      security:
+        - cookieAuth: []
       parameters:
         - name: id
           in: path
@@ -72,6 +76,8 @@ paths:
       tags:
         - Orders
       summary: Delete an order
+      security:
+        - cookieAuth: []
       parameters:
         - name: id
           in: path
@@ -89,6 +95,8 @@ paths:
       tags:
         - Orders
       summary: Get full order details with items
+      security:
+        - cookieAuth: []
       parameters:
         - name: orderId
           in: path
@@ -106,6 +114,8 @@ paths:
       tags:
         - Orders
       summary: Get all orders by profile ID
+      security:
+        - cookieAuth: []
       parameters:
         - name: profileId
           in: path
@@ -121,6 +131,8 @@ paths:
       tags:
         - Orders
       summary: Get all orders with items by profile ID
+      security:
+        - cookieAuth: []
       parameters:
         - name: profileId
           in: path
@@ -166,6 +178,8 @@ paths:
       tags:
         - Orders
       summary: Get detailed order history by profile ID
+      security:
+        - cookieAuth: []
       parameters:
         - name: profileId
           in: path
@@ -181,6 +195,8 @@ paths:
       tags:
         - Orders
       summary: Update order status
+      security:
+        - cookieAuth: []
       parameters:
         - name: id
           in: path
@@ -209,6 +225,8 @@ paths:
       tags:
         - Orders
       summary: Confirm an order and update product stock
+      security:
+        - cookieAuth: []
       parameters:
         - name: id
           in: path
@@ -228,6 +246,8 @@ paths:
       tags:
         - Orders
       summary: Get order items by product and optional date range
+      security:
+        - cookieAuth: []
       parameters:
         - name: productId
           in: path
@@ -250,7 +270,57 @@ paths:
         "200":
           description: Order items for given product and date range
 
+  /orders/active:
+    get:
+      tags:
+        - Orders
+      summary: Get the active (pending) order for the authenticated user
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: The active order for the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  profile_id:
+                    type: integer
+                  order_date:
+                    type: string
+                    format: date-time
+                  total_amount:
+                    type: number
+                  order_status:
+                    type: string
+                  order_items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OrderItem"
+              example:
+                id: 123
+                profile_id: 10
+                order_date: "2025-05-21T13:30:00.000Z"
+                total_amount: 199.99
+                order_status: "pending"
+                order_items:
+                  - product_id: 101
+                    quantity: 2
+                    unit_price: 99.99
+        "404":
+          description: No active order found
+        "401":
+          description: Unauthorized
+
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
   schemas:
     OrderItem:
       type: object

@@ -7,6 +7,7 @@ import {
   validateOrderStatusBody,
   validateProductDateQuery,
 } from "../validators/orderValidator.js";
+import { authenticate } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -57,6 +58,9 @@ router.delete("/:id", validateIdParam, OrderController.deleteOrder);
 
 // Bekräfta order och uppdatera lagersaldo
 router.patch("/:id/confirm", validateIdParam, OrderController.confirmOrder);
+
+// Hämta aktiv order
+router.get("/active", authenticate, OrderController.getActiveOrder);
 
 // Hämta orderitems för produkt och datumintervall
 router.get(
