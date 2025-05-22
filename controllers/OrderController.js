@@ -113,19 +113,17 @@ export const OrderController = {
 
   updateStatus: async (req, res) => {
     try {
-      const parsed = orderStatusSchema.parse({
-        orderId: req.params.id,
-        newStatus: req.body.newStatus,
-      });
+      const { id } = orderIdParamSchema.parse(req.params);
+      const { newStatus } = orderStatusSchema.parse(req.body);
 
       const updated = await OrderService.updateOrderStatus(
-        Number(parsed.orderId),
-        parsed.newStatus
+        Number(id),
+        newStatus
       );
 
       if (!updated) return res.status(404).json({ error: "Order not found" });
 
-      res.json({ success: true, status: parsed.newStatus });
+      res.json({ success: true, status: newStatus });
     } catch (err) {
       if (err instanceof z.ZodError)
         return res.status(400).json({ error: err.errors });

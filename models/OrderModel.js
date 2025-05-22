@@ -100,11 +100,11 @@ export const OrderModel = {
 
   getFullOrderHistory: async (profileId) => {
     const query = `
-      SELECT o.*, oi.id as item_id, oi.product_id, oi.quantity, oi.unit_price
-      FROM orders o
-      LEFT JOIN order_item oi ON o.id = oi.order_id
-      WHERE o.profile_id = $1
-      ORDER BY o.order_date DESC`;
+    SELECT o.*, oi.product_id, oi.quantity, oi.unit_price
+    FROM orders o
+    LEFT JOIN order_item oi ON o.id = oi.order_id
+    WHERE o.profile_id = $1
+    ORDER BY o.order_date DESC`;
     const rows = await executeQuery(query, [profileId]);
     return rows;
   },
