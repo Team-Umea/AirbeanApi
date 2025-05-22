@@ -71,3 +71,15 @@ export const addProduct = async (data) => {
     throw err;
   }
 };
+
+export const deleteProduct = async ({ productId }) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/products/${productId}`, {
+      withCredentials: true,
+    });
+
+    return response.data.data;
+  } catch (err) {
+    throw err;
+  }
+};

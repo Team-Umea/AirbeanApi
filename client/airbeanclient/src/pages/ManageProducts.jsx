@@ -23,7 +23,7 @@ const MangeProductsPage = () => {
     error,
   } = useQuery({
     queryFn: () => getProducts(searchQuery),
-    queryKey: ["products", searchQuery],
+    queryKey: ["manageProducts"],
     enabled: !!searchQuery || searchQuery === "",
   });
 
