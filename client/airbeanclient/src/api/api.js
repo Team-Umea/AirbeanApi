@@ -59,3 +59,27 @@ export const getProducts = async (searchQuery) => {
     throw err;
   }
 };
+
+export const addProduct = async (data) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/products`, data, {
+      withCredentials: true,
+    });
+
+    return response.data.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const deleteProduct = async ({ productId }) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/products/${productId}`, {
+      withCredentials: true,
+    });
+
+    return response.data.data;
+  } catch (err) {
+    throw err;
+  }
+};

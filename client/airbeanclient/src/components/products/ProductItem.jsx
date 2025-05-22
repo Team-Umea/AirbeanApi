@@ -1,6 +1,5 @@
 import { CircleCheck, CircleX } from "lucide-react";
-import { cn } from "../../lib/utitls";
-import DefaultButton from "../btn/DefualtButton";
+import DefaultButton from "../btn/DefaultButton";
 import coffeeBean from "../../assets/icons/coffee-bean.svg";
 import coffeeBeanOutline from "../../assets/icons/coffee-bean-outline.svg";
 import { useDispatch, useSelector } from "react-redux";

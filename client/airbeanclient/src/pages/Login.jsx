@@ -32,7 +32,6 @@ const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const formMehtods = useForm({ resolver: zodResolver(loginSchema) });
   const loginMutation = useMutation({
     mutationFn: login,

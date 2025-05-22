@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import Modal from "../components/utils/Modal";
 import { getQueryParams } from "../lib/utitls";
+import AcceptModal from "../components/utils/AcceptModal";
 
 export default function Layout() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -39,6 +40,7 @@ export default function Layout() {
         richColors
       />
       <Modal />
+      <AcceptModal />
       <Footer />
     </div>
   );

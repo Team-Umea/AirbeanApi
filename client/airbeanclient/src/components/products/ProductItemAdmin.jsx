@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import DefaultButton from "../btn/DefualtButton";
+import DefaultButton from "../btn/DefaultButton";
 import { setProduct } from "../../store/manageProductSlice";
 import { Circle, CircleCheck } from "lucide-react";
 
