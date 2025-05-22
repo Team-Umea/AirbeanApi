@@ -120,11 +120,16 @@ const Cart = () => {
       .then(result => {
         console.log("Beställning skapad:", result);
         dispatch(clearCart());
-        navigate("/profil"); // ✅ Navigera till profilsidan
+
+            dispatch(applyDiscount({ code: null, amount: 0 }));
+            localStorage.removeItem("discount");
+            setDiscountCode("");
+
+        navigate("/profil");
       })
       .catch(err => {
         console.error("Fel vid beställning:", err);
-        // Visa felmeddelande till användaren
+
       });
   }}
 >
