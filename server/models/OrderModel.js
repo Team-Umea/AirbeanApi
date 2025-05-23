@@ -59,40 +59,33 @@ export const OrderModel = {
 
   getOrdersWithItemsByProfileId: async (profileId) => {
     const query = `
-    SELECT 
-      o.id as order_id, o.profile_id, o.order_date, o.total_amount, o.order_status,
-      oi.product_id, oi.quantity, oi.unit_price,
-      p.product_name
-    FROM orders o
-    LEFT JOIN order_item oi ON o.id = oi.order_id
-    LEFT JOIN product p ON oi.product_id = p.id
-    WHERE o.profile_id = $1
-    ORDER BY o.order_date DESC, o.id
-  `;
+      SELECT 
+        o.id as order_id, o.profile_id, o.order_date, o.total_amount, o.order_status,
+        json_agg(
+          json_build_object(
+            'product_id', oi.product_id,
+            'quantity', oi.quantity,
+            'unit_price', oi.unit_price,
+            'product_name', p.product_name
+          )
+        ) as order_items
+      FROM orders o
+      LEFT JOIN order_item oi ON o.id = oi.order_id
+      LEFT JOIN product p ON oi.product_id = p.id
+      WHERE o.profile_id = $1
+      GROUP BY o.id, o.profile_id, o.order_date, o.total_amount, o.order_status
+      ORDER BY o.order_date DESC, o.id
+    `;
     const rows = await executeQuery(query, [profileId]);
-
-    const ordersMap = {};
-    for (const row of rows) {
-      if (!ordersMap[row.order_id]) {
-        ordersMap[row.order_id] = {
-          id: row.order_id,
-          profile_id: row.profile_id,
-          order_date: row.order_date,
-          total_amount: row.total_amount,
-          order_status: row.order_status,
-          order_items: [],
-        };
-      }
-      if (row.product_id) {
-        ordersMap[row.order_id].order_items.push({
-          product_id: row.product_id,
-          quantity: row.quantity,
-          unit_price: row.unit_price,
-          product_name: row.product_name,
-        });
-      }
-    }
-    return Object.values(ordersMap);
+    return rows.map((row) => ({
+      id: row.order_id,
+      profile_id: row.profile_id,
+      order_date: row.order_date,
+      total_amount: row.total_amount,
+      order_status: row.order_status,
+      order_items:
+        row.order_items[0].product_id === null ? [] : row.order_items,
+    }));
   },
 
   getFullOrderHistory: async (profileId) => {
@@ -207,25 +200,37 @@ export const OrderModel = {
   },
 
   getActiveOrderByProfileId: async (profileId) => {
-    const queryOrder = `
-    SELECT * FROM orders
-    WHERE profile_id = $1 AND order_status = 'Behandlas'
-    ORDER BY order_date DESC
-    LIMIT 1
-  `;
-    const orders = await executeQuery(queryOrder, [profileId]);
-    if (orders.length === 0) return null;
+    const query = `
+      SELECT 
+        o.id as order_id, o.profile_id, o.order_date, o.total_amount, o.order_status,
+        json_agg(
+          json_build_object(
+            'product_id', oi.product_id,
+            'quantity', oi.quantity,
+            'unit_price', oi.unit_price,
+            'product_name', p.product_name
+          )
+        ) as order_items
+      FROM orders o
+      LEFT JOIN order_item oi ON o.id = oi.order_id
+      LEFT JOIN product p ON oi.product_id = p.id
+      WHERE o.profile_id = $1 AND o.order_status = 'Behandlas'
+      GROUP BY o.id, o.profile_id, o.order_date, o.total_amount, o.order_status
+      ORDER BY o.order_date DESC
+      LIMIT 1
+    `;
+    const rows = await executeQuery(query, [profileId]);
+    if (rows.length === 0) return null;
 
-    const order = orders[0];
-
-    const queryItems = `
-    SELECT oi.product_id, oi.quantity, oi.unit_price, p.product_name
-    FROM order_item oi
-    LEFT JOIN product p ON oi.product_id = p.id
-    WHERE oi.order_id = $1
-  `;
-    const items = await executeQuery(queryItems, [order.id]);
-
-    return { ...order, order_items: items };
+    const row = rows[0];
+    return {
+      id: row.order_id,
+      profile_id: row.profile_id,
+      order_date: row.order_date,
+      total_amount: row.total_amount,
+      order_status: row.order_status,
+      order_items:
+        row.order_items[0].product_id === null ? [] : row.order_items,
+    };
   },
 };

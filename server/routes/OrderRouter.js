@@ -36,8 +36,8 @@ router.get(
 
 // Hämta orders med items för en profil
 router.get(
-  "/with-items/profile/:profileId",
-  validateProfileIdParam,
+  "/with-items/profile",
+  authenticate,
   OrderController.getOrdersWithItemsByProfile
 );
 

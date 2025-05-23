@@ -116,6 +116,5 @@ export {
   newOrderSchema as orderSchema,
   orderStatusSchema,
   idParamSchema as orderIdParamSchema,
-  profileIdParamSchema,
   productDateQuerySchema,
 };
