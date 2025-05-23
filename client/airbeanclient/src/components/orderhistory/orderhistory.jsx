@@ -56,8 +56,10 @@ const OrderHistory = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-center">Orderhistorik</h2>
+    <div className="max-w-3xl mx-auto mt-8 bg-[#4a2c2a] rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl text-white font-bold mb-4 text-center rounded-t-xl p-4">
+        Orderhistorik
+      </h2>
       <ul className="space-y-4">
         {visibleOrders.map((order, idx) => (
           <li

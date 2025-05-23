@@ -61,12 +61,9 @@ const Orderstatus = () => {
         setSecondsLeft(null);
         return;
       }
-      const res = await axios.get(
-        `${BASE_URL}/api/orders/active/${profileId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/api/orders/active`, {
+        withCredentials: true,
+      });
       const activeOrder = res.data;
 
       if (activeOrder) {
@@ -130,7 +127,7 @@ const Orderstatus = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start bg-amber-100 mt-12">
+    <div className="flex flex-col items-center justify-start bg-amber-100 mt-6 rounded-lg shadow-lg">
       <style>
         {`
           @keyframes drone-fly {
@@ -148,7 +145,7 @@ const Orderstatus = () => {
           }
         `}
       </style>
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+      <div className="bg-white shadow-lg rounded-lg p-9 max-w-md w-full">
         {secondsLeft > 0 && (
           <div className="flex justify-center">
             <img
@@ -164,7 +161,7 @@ const Orderstatus = () => {
             ? "Din beställning är på väg!"
             : showingLatest
             ? "Din senaste order"
-            : "Ordern är levererad! 🎉"}
+            : "Ordern är levererad! ☕"}
         </h1>
         {order && (
           <>
