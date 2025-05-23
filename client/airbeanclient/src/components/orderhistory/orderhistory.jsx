@@ -1,17 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderHistory } from "../../store/orderSlice";
+import SecondaryButton from "../btn/SecondaryButton";
 
 const OrderHistory = () => {
   const dispatch = useDispatch();
   const profileId = useSelector((state) => state.auth.userID);
   const { orders, status, error } = useSelector((state) => state.order);
+  const [visibleOrders, setVisibleOrders] = useState([]);
+  const [ordersToShow, setOrdersToShow] = useState(5);
+  const [showLoadMore, setShowLoadMore] = useState(false);
 
   useEffect(() => {
     if (profileId) {
       dispatch(fetchOrderHistory(profileId));
     }
   }, [profileId, dispatch]);
+
+  useEffect(() => {
+    if (orders && orders.length > 0) {
+      setVisibleOrders(orders.slice(0, ordersToShow));
+      setShowLoadMore(orders.length > ordersToShow);
+    }
+  }, [orders, ordersToShow]);
+
+  const handleLoadMore = () => {
+    const newOrdersToShow = ordersToShow + 5;
+    setVisibleOrders(orders.slice(0, newOrdersToShow));
+    setOrdersToShow(newOrdersToShow);
+    setShowLoadMore(orders.length > newOrdersToShow);
+  };
 
   if (!profileId) {
     return <div>Du måste vara inloggad för att se orderhistorik.</div>;
@@ -41,7 +59,7 @@ const OrderHistory = () => {
     <div className="max-w-3xl mx-auto mt-8">
       <h2 className="text-2xl font-bold mb-4 text-center">Orderhistorik</h2>
       <ul className="space-y-4">
-        {orders.map((order, idx) => (
+        {visibleOrders.map((order, idx) => (
           <li
             key={`${order.id}-${idx}`}
             className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 p-4"
@@ -88,6 +106,14 @@ const OrderHistory = () => {
           </li>
         ))}
       </ul>
+      {showLoadMore && (
+        <SecondaryButton
+          className="max-w-fit text-white font-bold m-auto py-2 px-4 rounded mt-4"
+          onClick={handleLoadMore}
+        >
+          Ladda fler ordrar
+        </SecondaryButton>
+      )}
     </div>
   );
 };

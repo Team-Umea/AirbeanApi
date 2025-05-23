@@ -37,7 +37,7 @@ const Profil = () => {
         <Orderstatus />
         <OrderHistory />
         <PrimaryButton
-          className={"max-w-fit m-auto mt-4"}
+          className={"max-w-fit m-auto mt-6 font-bold"}
           onClick={handleLogOut}
         >
           Logga ut
