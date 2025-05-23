@@ -1,6 +1,3 @@
-Here's the updated `README.md` for your **AirBean** project, now including **React Hook Form** under frontend technologies and improved clarity throughout:
-
-
 # AirBean ☕️🚁
 
 **AirBean** is a full-stack web application where users can order coffee and (fictionally) have it delivered by drone. The app uses a modern tech stack: **React** for the frontend, **Node.js** with **Express** for the backend, and **PostgreSQL** as the database.
