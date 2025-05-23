@@ -1,0 +1,289 @@
+paths:
+  /api/products:
+    get:
+      tags:
+        - Products
+      summary: Get all products
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search query string
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Field to sort by
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: Sort order
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        "200":
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+        "401":
+          description: Unauthenticated
+
+    post:
+      tags:
+        - Products
+      summary: Add a new product (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewProduct"
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid request body
+        "401":
+          description: Unauthenticated
+
+  /api/products/{productId}:
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: The ID of the product
+      responses:
+        "200":
+          description: A product object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Product"
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Product not found
+
+    put:
+      tags:
+        - Products
+      summary: Update an existing product (Admin only)
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: The ID of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExistingProduct"
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid request body
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Product not found
+
+    patch:
+      tags:
+        - Products
+      summary: Refill product quantity in stock (Admin only)
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: The ID of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stockQuantity:
+                  $ref: "#/components/schemas/ProductStockQuantity"
+      responses:
+        "200":
+          description: Product stock quantity updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid request body
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Product not found
+
+    delete:
+      tags:
+        - Products
+      summary: Delete a product (Admin only)
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: The ID of the product
+      responses:
+        "200":
+          description: Product deleted successfully
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Product not found
+
+  /api/products/overview:
+    get:
+      tags:
+        - Products
+      summary: Get product overview statistics (Admin only)
+      responses:
+        "200":
+          description: List of product summaries with order and earnings data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProductOverview"
+        "401":
+          description: Unauthenticated
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        productName:
+          type: string
+        productInfo:
+          type: string
+        cost:
+          type: number
+        stockQuantity:
+          type: number
+
+    NewProduct:
+      type: object
+      required:
+        - productName
+        - productInfo
+        - cost
+        - stockQuantity
+      properties:
+        productName:
+          type: string
+        productInfo:
+          type: string
+          minLength: 10
+          maxLength: 5000
+        cost:
+          type: number
+          minimum: 0
+        stockQuantity:
+          type: number
+          minimum: 0
+
+    ExistingProduct:
+      type: object
+      properties:
+        productName:
+          type: string
+        productInfo:
+          type: string
+          minLength: 10
+          maxLength: 5000
+        cost:
+          type: number
+          minimum: 0
+        stockQuantity:
+          type: number
+          minimum: 0
+
+    ProductStockQuantity:
+      type: number
+      minimum: 0
+
+    ProductOverview:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_name:
+          type: string
+        product_info:
+          type: string
+        cost:
+          type: string
+        stock_quantity:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        total_orders:
+          type: integer
+        total_earnings:
+          type: integer
