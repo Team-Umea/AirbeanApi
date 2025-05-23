@@ -22,8 +22,14 @@ const OrderHistory = () => {
   }
 
   if (error) {
+    console.error("Error i OrderHistory:", error);
     return (
-      <div className="m-8">Fel vid hämtning av orderhistorik: {error}</div>
+      <div className="m-8">
+        Fel vid hämtning av orderhistorik:{" "}
+        {typeof error === "string"
+          ? error
+          : error.message || "Ett fel inträffade"}
+      </div>
     );
   }
 
@@ -32,37 +38,53 @@ const OrderHistory = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-8">
+    <div className="max-w-3xl mx-auto mt-8">
       <h2 className="text-2xl font-bold mb-4 text-center">Orderhistorik</h2>
-      <ul>
+      <ul className="space-y-4">
         {orders.map((order, idx) => (
           <li
             key={`${order.id}-${idx}`}
-            className="mb-6 p-4 bg-white rounded shadow"
+            className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 p-4"
           >
-            <span className="font-semibold m-2">
-              Order #{order.id} -{" "}
-              {new Date(order.order_date).toLocaleString("sv-SE", {
-                timeZone: "Europe/Stockholm",
-                hour: "2-digit",
-                minute: "2-digit",
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                second: undefined,
-              })}
-            </span>
-            <span>Status: {order.order_status}</span>
-            <ul>
-              {(order.items || order.order_items)?.map((item, index) => (
-                <li key={`${item.product_id}-${index}`}>
-                  <span className="m-2">
-                    {item.product_name || item.product_id}
-                  </span>
-                  <span className="m-1">x{item.quantity}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="font-semibold">Order #{order.id}</span>
+              </div>
+              <div className="text-right">
+                <span className="text-gray-600">
+                  {new Date(order.order_date).toLocaleString("sv-SE", {
+                    timeZone: "Europe/Stockholm",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    second: undefined,
+                  })}
+                </span>
+              </div>
+            </div>
+            <div className="mt-2">
+              <span className="font-semibold">Status:</span>{" "}
+              <span className="text-blue-500">{order.order_status}</span>
+            </div>
+            <div className="mt-2">
+              <span className="font-semibold">Artiklar:</span>
+              <ul className="list-disc list-inside">
+                {order.order_items?.map((item, index) => (
+                  <li key={`${order.id}-${index}`}>
+                    <span className="mr-2">
+                      {item.product_name || item.product_id}
+                    </span>
+                    <span className="text-gray-500">x{item.quantity}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-2">
+              <span className="font-semibold">Totalt:</span>{" "}
+              <span className="text-green-600">{order.total_amount} kr</span>
+            </div>
           </li>
         ))}
       </ul>

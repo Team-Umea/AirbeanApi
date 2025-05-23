@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = "http://localhost:3000";
+
 export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (orderData, { rejectWithValue }) => {
@@ -36,13 +38,13 @@ export const fetchOrderHistory = createAsyncThunk(
   "order/fetchOrderHistory",
   async (profileId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/orders/history/${profileId}`,
-        { withCredentials: true }
-      );
-      return response.data;
+      const res = await axios.get(`${BASE_URL}/api/orders/with-items/profile`, {
+        withCredentials: true,
+      });
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error("Error fetching order history:", error);
+      return rejectWithValue(error.response?.data || "Ett fel inträffade");
     }
   }
 );
