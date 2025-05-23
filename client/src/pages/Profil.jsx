@@ -36,7 +36,10 @@ const Profil = () => {
       <div className="m-auto flex flex-col items-center justify-center">
         <Orderstatus />
         <OrderHistory />
-        <PrimaryButton className={"max-w-fit m-auto"} onClick={handleLogOut}>
+        <PrimaryButton
+          className={"max-w-fit m-auto mt-6 font-bold"}
+          onClick={handleLogOut}
+        >
           Logga ut
         </PrimaryButton>
       </div>
