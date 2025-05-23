@@ -17,6 +17,11 @@ export const createOrder = createAsyncThunk(
 
       return response.data;
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        return rejectWithValue(
+          "Tyvärr, en eller fler av dina produkter finns inte i lager."
+        );
+      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -62,6 +67,11 @@ export const confirmOrder = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        return rejectWithValue(
+          "Tyvärr, en eller flera produkter i din varukorg har inte tillräckligt med lager."
+        );
+      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }

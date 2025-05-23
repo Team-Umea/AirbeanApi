@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import AcceptModal from "../components/utils/AcceptModal";
 import { ArrowRight } from "lucide-react";
 import SecondaryButton from "../components/btn/SecondaryButton";
+import { toast } from "sonner";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -125,10 +126,17 @@ const Cart = () => {
               })
               .catch((err) => {
                 console.error("Fel vid bekräftelse av beställning:", err);
+                // Visa felmeddelande för användaren
+                const errorMessage =
+                  err.details ||
+                  "Ett fel uppstod vid bekräftelsen av beställningen.";
+                toast.error(errorMessage);
               });
           })
           .catch((err) => {
             console.error("Fel vid beställning:", err);
+            // Visa felmeddelande för användaren
+            toast.error(err.error || "Ett fel uppstod vid beställningen.");
           });
       }
     );
