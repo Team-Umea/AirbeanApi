@@ -49,18 +49,36 @@ export const fetchOrderHistory = createAsyncThunk(
   }
 );
 
+export const confirmOrder = createAsyncThunk(
+  "order/confirmOrder",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/api/orders/${orderId}/confirm`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
     order: null,
-    orders: [], // För orderhistorik
+    orders: [],
     status: "idle",
     error: null,
   },
   reducers: {
     resetOrder: (state) => {
       state.order = null;
-      state.orders = []; // Rensa orderhistorik
+      state.orders = [];
       state.status = "idle";
       state.error = null;
     },
@@ -83,9 +101,19 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrderHistory.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.orders = action.payload; // Uppdatera orderhistorik
+        state.orders = action.payload;
       })
       .addCase(fetchOrderHistory.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(confirmOrder.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(confirmOrder.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(confirmOrder.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
