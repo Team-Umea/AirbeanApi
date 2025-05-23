@@ -57,7 +57,7 @@ export const createTables = async () => {
       CREATE TABLE IF NOT EXISTS orders (
         id SERIAL PRIMARY KEY,
         profile_id INTEGER NOT NULL,
-        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        order_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         total_amount DECIMAL(10,2),
         order_status VARCHAR,
         FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
@@ -79,6 +79,6 @@ export const createTables = async () => {
     await executeQuery("COMMIT");
   } catch (err) {
     await executeQuery("ROLLBACK");
-    console.log(`Error creating tables: `, err);
+    console.error(`Error creating tables: `, err);
   }
 };

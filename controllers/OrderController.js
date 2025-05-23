@@ -17,6 +17,7 @@ export const OrderController = {
       const order = await OrderService.createOrder({
         ...parsed,
         profile_id,
+        order_status: "Behandlas",
       });
 
       // Beräknar uppskattad leveranstid
