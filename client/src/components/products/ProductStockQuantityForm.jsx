@@ -43,14 +43,16 @@ const ProductStockQuantityFrom = () => {
     onError: (err) => {
       let errorMessage;
 
-      console.log(err);
+      console.error(err);
 
       switch (err.status) {
         case 401:
-          errorMessage = "Din session har gått ut, logga in igen för att fortsätta";
+          errorMessage =
+            "Din session har gått ut, logga in igen för att fortsätta";
           break;
         default:
-          errorMessage = "Ett fel uppstod vid uppdatering av produkt, var snäll och försök igen";
+          errorMessage =
+            "Ett fel uppstod vid uppdatering av produkt, var snäll och försök igen";
           break;
       }
 
@@ -59,12 +61,20 @@ const ProductStockQuantityFrom = () => {
   });
 
   const onSubmit = (data) =>
-    updateProductStockQuantityMutation.mutate({ ...data, productId: selectedProduct.id });
+    updateProductStockQuantityMutation.mutate({
+      ...data,
+      productId: selectedProduct.id,
+    });
 
   return (
     <FormProvider {...formMehtods}>
       <Form onSubmit={onSubmit} className="pt-0!">
-        <FormInput name="stockQuantity" type="number" label="Antal i lager" className="mt-8!" />
+        <FormInput
+          name="stockQuantity"
+          type="number"
+          label="Antal i lager"
+          className="mt-8!"
+        />
         <PrimaryButton type="submit" className="mt-12!" disabled={isPending}>
           Uppdatera
           {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

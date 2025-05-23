@@ -6,7 +6,7 @@ import {
   clearCart,
   applyDiscount,
 } from "../store/cartSlice";
-import { createOrder } from "../store/orderSlice";
+import { confirmOrder, createOrder } from "../store/orderSlice";
 import "../styles/Cart.css";
 import PrimaryButton from "../components/btn/PrimaryButton";
 import ModalComponent from "../components/utils/Modal";
@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import AcceptModal from "../components/utils/AcceptModal";
 import { ArrowRight } from "lucide-react";
 import SecondaryButton from "../components/btn/SecondaryButton";
+import { toast } from "sonner";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -110,16 +111,32 @@ const Cart = () => {
           .unwrap()
           .then((result) => {
             console.log("Beställning skapad:", result);
-            dispatch(clearCart());
+            // Bekräfta ordern efter att den har skapats
+            dispatch(confirmOrder(result.id))
+              .unwrap()
+              .then(() => {
+                console.log("Beställning bekräftad!");
+                dispatch(clearCart());
 
-            dispatch(applyDiscount({ code: null, amount: 0 }));
-            localStorage.removeItem("discount");
-            setDiscountCode("");
+                dispatch(applyDiscount({ code: null, amount: 0 }));
+                localStorage.removeItem("discount");
+                setDiscountCode("");
 
-            navigate("/profil");
+                navigate("/profil");
+              })
+              .catch((err) => {
+                console.error("Fel vid bekräftelse av beställning:", err);
+                // Visa felmeddelande för användaren
+                const errorMessage =
+                  err.details ||
+                  "Ett fel uppstod vid bekräftelsen av beställningen.";
+                toast.error(errorMessage);
+              });
           })
           .catch((err) => {
             console.error("Fel vid beställning:", err);
+            // Visa felmeddelande för användaren
+            toast.error(err.error || "Ett fel uppstod vid beställningen.");
           });
       }
     );

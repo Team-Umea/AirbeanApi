@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const BASE_URL = "http://localhost:3000";
+
 export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (orderData, { rejectWithValue }) => {
@@ -15,6 +17,11 @@ export const createOrder = createAsyncThunk(
 
       return response.data;
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        return rejectWithValue(
+          "Tyvärr, en eller fler av dina produkter finns inte i lager."
+        );
+      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -36,12 +43,35 @@ export const fetchOrderHistory = createAsyncThunk(
   "order/fetchOrderHistory",
   async (profileId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/orders/history/${profileId}`,
-        { withCredentials: true }
+      const res = await axios.get(`${BASE_URL}/api/orders/with-items/profile`, {
+        withCredentials: true,
+      });
+      return res.data;
+    } catch (error) {
+      console.error("Error fetching order history:", error);
+      return rejectWithValue(error.response?.data || "Ett fel inträffade");
+    }
+  }
+);
+
+export const confirmOrder = createAsyncThunk(
+  "order/confirmOrder",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/api/orders/${orderId}/confirm`,
+        {},
+        {
+          withCredentials: true,
+        }
       );
       return response.data;
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        return rejectWithValue(
+          "Tyvärr, en eller flera produkter i din varukorg har inte tillräckligt med lager."
+        );
+      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -51,14 +81,14 @@ const orderSlice = createSlice({
   name: "order",
   initialState: {
     order: null,
-    orders: [], // För orderhistorik
+    orders: [],
     status: "idle",
     error: null,
   },
   reducers: {
     resetOrder: (state) => {
       state.order = null;
-      state.orders = []; // Rensa orderhistorik
+      state.orders = [];
       state.status = "idle";
       state.error = null;
     },
@@ -81,9 +111,19 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrderHistory.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.orders = action.payload; // Uppdatera orderhistorik
+        state.orders = action.payload;
       })
       .addCase(fetchOrderHistory.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(confirmOrder.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(confirmOrder.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(confirmOrder.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
