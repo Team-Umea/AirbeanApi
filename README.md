@@ -21,7 +21,6 @@ airbean/
 
 ```bash
 git clone https://github.com/Team-Umea/AirbeanApi.git
-cd airbean
 ````
 
 ### 2. Install Dependencies and Run the Apps
